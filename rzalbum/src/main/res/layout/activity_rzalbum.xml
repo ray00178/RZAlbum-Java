@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_album1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="false"
+    tools:context="com.rayzhang.android.rzalbum.RZAlbumActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="false">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/mToolBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
+            app:layout_scrollFlags="scroll|enterAlways"></android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/mRecyView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"></android.support.v7.widget.RecyclerView>
+
+    <!-- 底部控制列 -->
+    <RelativeLayout
+        android:id="@+id/mBottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:minHeight="?attr/actionBarSize"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
+
+        <com.rayzhang.android.rzalbum.widget.RZIconTextView
+            android:id="@+id/mTextFolder"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:gravity="center_vertical"
+            android:maxLines="2"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            app:rightDrawable="@drawable/ic_down_35dp"
+            app:rightDrawableHeight="15dp"
+            app:rightDrawableWidth="15dp" />
+
+        <com.rayzhang.android.rzalbum.widget.RZIconTextView
+            android:id="@+id/mTextPrev"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_centerInParent="true"
+            android:gravity="center_vertical"
+            android:text="(0)"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            app:leftDrawable="@drawable/ic_prev_35dp"
+            app:leftDrawableHeight="25dp"
+            app:leftDrawableWidth="25dp" />
+
+        <ImageView
+            android:id="@+id/mImgDone"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_done_35dp" />
+    </RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

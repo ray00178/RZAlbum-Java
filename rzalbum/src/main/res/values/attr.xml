@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RZIconTextView">
+        <attr name="leftDrawableHeight" format="dimension"></attr>
+        <attr name="leftDrawableWidth" format="dimension"></attr>
+        <attr name="leftDrawable" format="reference"></attr>
+        <attr name="topDrawableHeight" format="dimension"></attr>
+        <attr name="topDrawableWidth" format="dimension"></attr>
+        <attr name="topDrawable" format="reference"></attr>
+        <attr name="rightDrawableHeight" format="dimension"></attr>
+        <attr name="rightDrawableWidth" format="dimension"></attr>
+        <attr name="rightDrawable" format="reference"></attr>
+        <attr name="drawUnderLine" format="boolean"></attr>
+    </declare-styleable>
+</resources>

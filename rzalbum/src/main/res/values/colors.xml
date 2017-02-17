@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="rz_colorPrimary">#cccccc</color>
+    <color name="rz_colorPrimaryDark">#bdbdbd</color>
+    <color name="rz_colorAccent">#fd6776</color>
+
+    <color name="rz_colorBlack">#000000</color>
+</resources>
