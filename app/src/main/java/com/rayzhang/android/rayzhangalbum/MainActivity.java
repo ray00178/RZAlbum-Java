@@ -1,6 +1,7 @@
 package com.rayzhang.android.rayzhangalbum;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -20,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, 1, 0, "RZAlbumActivity");
@@ -30,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case 1:
-                RZAlbum.startAlbum(this, REQUEST_RZALBUM, 10, 3, "圖庫");
+                RZAlbum.startAlbum(this, REQUEST_RZALBUM, 10, 3, "圖庫", Color.parseColor("#e91e63"), Color.parseColor("#c2185b"));
                 return true;
         }
         return super.onOptionsItemSelected(item);

@@ -16,12 +16,13 @@ import java.util.List;
  * 調用入口類
  */
 public class RZAlbum {
-    public final static String ALBUM_LIMIT_COUNT = "ALBUM_LIMIT_COUNT";
-    public final static String ALBUM_SPAN_COUNT = "ALBUM_SPAN_COUNT";
-    public final static String ALBUM_TOOLBAR_TITLE = "ALBUM_TOOLBAR_TITLE";
-    public final static String ALBUM_TOOLBAR_COLOR = "ALBUM_TOOLBAR_COLOR";
-    public final static String ALBUM_STATUS_COLOR = "ALBUM_STATUS_COLOR";
-    public final static String ALBUM_IMAGE_PATH_LIST = "ALBUM_IMAGE_PATH_LIST";
+    private static final String TAG = RZAlbum.class.getSimpleName();
+    public static final String ALBUM_LIMIT_COUNT = "ALBUM_LIMIT_COUNT";
+    public static final String ALBUM_SPAN_COUNT = "ALBUM_SPAN_COUNT";
+    public static final String ALBUM_TOOLBAR_TITLE = "ALBUM_TOOLBAR_TITLE";
+    public static final String ALBUM_TOOLBAR_COLOR = "ALBUM_TOOLBAR_COLOR";
+    public static final String ALBUM_STATUS_COLOR = "ALBUM_STATUS_COLOR";
+    public static final String ALBUM_IMAGE_PATH_LIST = "ALBUM_IMAGE_PATH_LIST";
 
     /**
      * 最多選擇30張
@@ -96,6 +97,7 @@ public class RZAlbum {
         if (limitCount > MAXCOUNT) {
             limitCount = MAXCOUNT;
         }
+        //Log.d(TAG, String.format("ToolBar:%d StatusBar:%d", toolbarColor, statusBarColor));
         Intent intent = new Intent(activity, RZAlbumActivity.class);
         intent.putExtra(ALBUM_LIMIT_COUNT, limitCount);
         intent.putExtra(ALBUM_SPAN_COUNT, spanCount);

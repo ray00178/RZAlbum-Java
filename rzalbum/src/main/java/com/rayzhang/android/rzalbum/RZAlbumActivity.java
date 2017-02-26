@@ -53,6 +53,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class RZAlbumActivity extends AppCompatActivity implements View.OnClickListener, OnPrevBoxClickListener {
+    private static final String TAG = RZAlbumActivity.class.getSimpleName();
     private static final int PERMISSION_REQUEST_STORAGE = 9998;
     private static final int PERMISSION_REQUEST_CAMERA = 9999;
     private static final int ACTIVITY_REQUEST_CAMERA = 9997;
@@ -89,7 +90,7 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
     private int saveClickPos = 0;
 
     /**
-     *  2017-02-26 添加預覽時statusBarColor改成黑色，離開時改回原來的Color
+     * 2017-02-26 添加預覽時statusBarColor改成黑色，離開時改回原來的Color
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,10 +103,11 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
         toolBarTitle = i.getStringExtra(RZAlbum.ALBUM_TOOLBAR_TITLE);
         toolBarColor = i.getIntExtra(RZAlbum.ALBUM_TOOLBAR_COLOR, 0);
         statusBarColor = i.getIntExtra(RZAlbum.ALBUM_STATUS_COLOR, 0);
-        if (statusBarColor <= 0) {
+        //Log.d(TAG, String.format("ToolBar:%d StatusBar:%d", toolBarColor, statusBarColor));
+        if (statusBarColor == 0) {
             statusBarColor = Color.parseColor("#bdbdbd");
         }
-        if (toolBarColor <= 0) {
+        if (toolBarColor == 0) {
             toolBarColor = Color.parseColor("#cccccc");
         }
         initView();
