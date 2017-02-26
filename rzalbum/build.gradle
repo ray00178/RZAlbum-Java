@@ -1,23 +1,32 @@
 apply plugin: 'com.android.library'
 
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
+// 這個版本是區分庫版本的，因此當我們需要更新library時記得修改這個版本
+version = "1.0.0"
+
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.0"
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 25
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    // 這是添加的
+    lintOptions{
+        abortOnError false
+        checkReleaseBuilds false
     }
 }
 
@@ -32,4 +41,71 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:25.1.1'
     // Glide
     compile 'com.github.bumptech.glide:glide:3.7.0'
+}
+
+def siteUrl = 'https://github.com/ray00178/RayZhangAlbum.git'      // 項目的主頁
+def gitUrl = 'https://github.com/ray00178/RayZhangAlbum.git'       // Git倉庫的url
+group = "com.rayzhang.android"         // Maven Group ID for the artifact，一般填你唯一的包名
+install {
+    repositories.mavenInstaller {
+        // This generates POM.xml with proper parameters
+        pom {
+            project {
+                packaging 'aar'
+                // Add your description here
+                name 'This is a album for Android.'
+                url siteUrl
+                // Set your license
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers { // 填寫一些開發者的訊息
+                    developer {
+                        id 'ray00178'
+                        name 'ray'
+                        email 'ray00178@gmail.com'
+                    }
+                }
+                scm {
+                    connection gitUrl
+                    developerConnection gitUrl
+                    url siteUrl
+                }
+            }
+        }
+    }
+}
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+    configurations = ['archives']
+    pkg {
+        repo = "maven"      // 這邊是對應jCenter的倉庫名稱
+        name = "rzalbum"    // 發佈到jCenter上的項目名稱
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = ["Apache-2.0"]
+        publish = true
+    }
 }

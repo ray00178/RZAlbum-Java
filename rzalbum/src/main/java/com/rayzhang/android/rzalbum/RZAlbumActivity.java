@@ -74,6 +74,7 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
     private String toolBarTitle;
     private int spanCount, limitCount;
     private int toolBarColor;
+    private int statusBarColor;
 
     private List<AlbumFolder> mAlbumFolders;
     private BottomSheetDialog dialog;
@@ -87,6 +88,9 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
     // 紀錄bottomDialog點選到的相簿
     private int saveClickPos = 0;
 
+    /**
+     *  2017-02-26 添加預覽時statusBarColor改成黑色，離開時改回原來的Color
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,7 +101,7 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
         spanCount = i.getIntExtra(RZAlbum.ALBUM_SPAN_COUNT, 2);
         toolBarTitle = i.getStringExtra(RZAlbum.ALBUM_TOOLBAR_TITLE);
         toolBarColor = i.getIntExtra(RZAlbum.ALBUM_TOOLBAR_COLOR, 0);
-        int statusBarColor = i.getIntExtra(RZAlbum.ALBUM_STATUS_COLOR, 0);
+        statusBarColor = i.getIntExtra(RZAlbum.ALBUM_STATUS_COLOR, 0);
         if (statusBarColor <= 0) {
             statusBarColor = Color.parseColor("#bdbdbd");
         }
@@ -248,7 +252,6 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
         set.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animator) {
-
             }
 
             @Override
@@ -258,12 +261,10 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void onAnimationCancel(Animator animator) {
-
             }
 
             @Override
             public void onAnimationRepeat(Animator animator) {
-
             }
         });
         set.start();
@@ -403,8 +404,10 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
             prevAlbumDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialogInterface) {
+                    setStatusBarColor(statusBarColor);
                 }
             });
+            setStatusBarColor(Color.BLACK);
             prevAlbumDialog.show();
         } else {
             Intent intent = new Intent();
