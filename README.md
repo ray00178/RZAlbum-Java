@@ -1,19 +1,17 @@
 RZAlbum
 ====
-RZAlbum用於Android使用的照片選擇庫，相關功能如下：<br>
+RZAlbum用於Android使用的照片選擇庫，相關功能如下：<br/>
 * 可支持單選、複選、預覽、照片文件夾切換及內建拍照  
 * 對於__6.0以上版本__，已將權限做很好的處理，故無需擔心要自行處理
 * 依照你的專案配色，可自訂StatusBarColor、ToolBarColor
 * 可依照你的喜好/需求，顯示欄位數量及選取張數限制
-* 無論是在Activity、Frangment，都可支持使用<br>
+* 無論是在Activity、Frangment，都可支持使用<br/>
 
 Screenshots 
 ====
-<img src="https://github.com/ray00178/RayZhangAlbum/blob/master/app/src/main/res/drawable/Demo_1.jpg" alt="Demo_1" title="Demo_1" width="300" height="500" />
-<img src="https://github.com/ray00178/RayZhangAlbum/blob/master/app/src/main/res/drawable/Demo_2.jpg" alt="Demo_2" title="Demo_2" width="300" height="500" />
-<br>
-<img src="https://github.com/ray00178/RayZhangAlbum/blob/master/app/src/main/res/drawable/Demo_gif.gif" alt="Demo_gif" title="Demo_gif" width="300" height="500" />
-<br>
+<img src="https://github.com/ray00178/RayZhangAlbum/blob/master/app/src/main/res/drawable/Demo_1.jpg" alt="Demo_1" title="Demo_1" width="300" height="500" /><br/>
+<img src="https://github.com/ray00178/RayZhangAlbum/blob/master/app/src/main/res/drawable/Demo_2.jpg" alt="Demo_2" title="Demo_2" width="300" height="500" /><br/>
+<img src="https://github.com/ray00178/RayZhangAlbum/blob/master/app/src/main/res/drawable/Demo_gif.gif" alt="Demo_gif" title="Demo_gif" width="300" height="500" /><br/>
 Gradle
 ====
 ```java
@@ -91,7 +89,7 @@ Usage
     */
     RZAlbum.startAlbum(this, RZALBUM_REQUESTCODE, 5, 3, "RZAlbum", Color.parseColor("#e91e63"), Color.parseColor("#c2185b"));
   ```
-  4.__Override Activity/Fragment的onActivityResult方法__
+  4.Override Activity/Fragment的onActivityResult方法
   ```java
   @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
