@@ -9,13 +9,13 @@ The RZAlbum for android to select the photo library. And usage：<br/>
 
 Screenshots 
 ====
-<img src="https://github.com/ray00178/RayZhangAlbum/blob/master/app/src/main/res/drawable/Demo_1.jpg" alt="Demo_1" title="Demo_1" width="300" height="500" /><br/>
-<img src="https://github.com/ray00178/RayZhangAlbum/blob/master/app/src/main/res/drawable/Demo_2.jpg" alt="Demo_2" title="Demo_2" width="300" height="500" /><br/>
+<img src="https://github.com/ray00178/RayZhangAlbum/blob/master/Screenshot_1.jpg" alt="Demo_1" title="Demo_1" width="300" height="500" /><br/>
+<img src="https://github.com/ray00178/RayZhangAlbum/blob/master/Screenshot_2.jpg" alt="Demo_2" title="Demo_2" width="300" height="500" /><br/>
 <img src="https://github.com/ray00178/RayZhangAlbum/blob/master/app/src/main/res/drawable/Demo_gif.gif" alt="Demo_gif" title="Demo_gif" width="300" height="500" /><br/>
 Gradle
 ====
 ```java
-compile 'com.rayzhang.android:rzalbum:1.0.1'
+compile 'com.rayzhang.android:rzalbum:1.0.5'
 ```
 Maven
 ====
@@ -23,7 +23,7 @@ Maven
 <dependency>
   <groupId>com.rayzhang.android</groupId>
   <artifactId>rzalbum</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.5</version>
   <type>pom</type>
 </dependency>
 ```
@@ -34,14 +34,12 @@ Usage
   <activity
       android:name="com.rayzhang.android.rzalbum.RZAlbumActivity"
       android:configChanges="orientation|keyboardHidden|screenSize"
-      android:label="RZ照片"
       android:screenOrientation="portrait"
       android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
       android:windowSoftInputMode="stateAlwaysHidden|stateHidden" />
   ```
   2.Androidmanifest.xml, Add the following permissions.
   ```xml
-    <!-- 相機、讀取儲存 -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -49,45 +47,24 @@ Usage
   3.Use RZAlbum. There are five ways to call.
   ```java
   /**
-    * @param activity    
-    * @param requestCode
+    * @param ofLimitCount(must)     
+    * @param ofSpanCount(choose)
+    * @param withStatusBarColor(choose)
+    * @param withToolBarColor(choose)
+    * @param withToolBarTitle(choose)
+    * @param start(must)
     */
-    RZAlbum.startAlbum(this, RZALBUM_REQUESTCODE);
-  
-  /**
-    * @param activity    
-    * @param requestCode 
-    * @param limitCount
-    */
-    RZAlbum.startAlbum(this, RZALBUM_REQUESTCODE, 5);
-  
-  /**
-    * @param activity    
-    * @param requestCode 
-    * @param limitCount  
-    * @param spanCount  
-    */
-    RZAlbum.startAlbum(this, RZALBUM_REQUESTCODE, 5, 3);
-    
-  /**
-    * @param activity     
-    * @param requestCode  
-    * @param limitCount   
-    * @param spanCount    
-    * @param toolbarTitle 
-    */
-    RZAlbum.startAlbum(this, RZALBUM_REQUESTCODE, 5, 3, "RZAlbum");
-    
-  /**
-    * @param activity       
-    * @param requestCode   
-    * @param limitCount     
-    * @param spanCount      
-    * @param toolbarTitle   
-    * @param toolbarColor   
-    * @param statusBarColor 
-    */
-    RZAlbum.startAlbum(this, RZALBUM_REQUESTCODE, 5, 3, "RZAlbum", Color.parseColor("#e91e63"), Color.parseColor("#c2185b"));
+    RZAlbum.ofLimitCount(2)
+            .start(this, REQUEST_RZALBUM);
+    /**
+      * Or Like this
+      */
+    RZAlbum.ofLimitCount(2)
+            .ofSpanCount(3)
+            .withStatusBarColor(Color.parseColor("#AD1457"))
+            .withToolBarColor(Color.parseColor("#D81B60"))
+            .withToolBarTitle("Album")
+            .start(this, REQUEST_RZALBUM);
   ```
   4.Override Activity's/Fragment's onActivityResult method.
   ```java
@@ -107,8 +84,8 @@ Notice
 ====
   Due to support Material Design style and handle the image cache, So the library references the following categories.
   ```xml
-  compile 'com.android.support:design:25.1.1'
-  compile 'com.android.support:recyclerview-v7:25.1.1'
+  compile 'com.android.support:design:25.3.1'
+  compile 'com.android.support:recyclerview-v7:25.3.1'
   // Glide
   compile 'com.github.bumptech.glide:glide:3.7.0'
   ```
