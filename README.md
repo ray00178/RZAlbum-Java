@@ -81,6 +81,15 @@ Usage
         }
     }
   ```
+  5.If you want to customize the Dialog title, description, and button name, please overwrite the following names in strings.xml.
+  ```xml
+  <string name="rz_album_dia_read_description">(Enter name that u want)</string>
+  <string name="rz_album_dia_read_message">(Enter name that u want)</string>
+  <string name="rz_album_dia_camera_description">(Enter name that u want)</string>
+  <string name="rz_album_dia_camera_message">(Enter name that u want)</string>
+  <string name="rz_album_dia_ok">(Enter name that u want)</string>
+  <string name="rz_album_dia_cancel">(Enter name that u want)</string>
+  ```
 Notice
 ====
   Due to support Material Design style and handle the image cache, So the library references the following categories.
