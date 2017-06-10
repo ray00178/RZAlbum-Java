@@ -5,38 +5,36 @@
     android:id="@+id/activity_album1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="false"
     tools:context="com.rayzhang.android.rzalbum.RZAlbumActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fitsSystemWindows="false">
+        android:layout_height="wrap_content">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/mToolBar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="?attr/actionBarSize"
-            app:layout_scrollFlags="scroll|enterAlways"></android.support.v7.widget.Toolbar>
-
+            android:layout_height="?attr/actionBarSize"
+            app:layout_scrollFlags="scroll|enterAlways">
+        </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/mRecyView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"></android.support.v7.widget.RecyclerView>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    </android.support.v7.widget.RecyclerView>
 
     <!-- 底部控制列 -->
     <RelativeLayout
         android:id="@+id/mBottomBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="?attr/actionBarSize"
         android:layout_gravity="bottom"
-        android:minHeight="?attr/actionBarSize"
         android:paddingLeft="10dp"
-        android:paddingRight="10dp">
+        android:paddingRight="10dp"
+        app:layout_behavior="@string/rz_scrollhide_behavior">
 
         <com.rayzhang.android.rzalbum.widget.RZIconTextView
             android:id="@+id/mTextFolder"
@@ -56,7 +54,9 @@
             android:id="@+id/mTextPrev"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"
+            android:layout_toLeftOf="@+id/mImgDone"
             android:gravity="center_vertical"
             android:text="(0)"
             android:textColor="@android:color/white"

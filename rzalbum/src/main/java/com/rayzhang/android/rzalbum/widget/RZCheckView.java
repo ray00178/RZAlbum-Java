@@ -45,7 +45,7 @@ public class RZCheckView extends View {
         mPaint.setDither(true);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setStrokeJoin(Paint.Join.ROUND);
-        mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setColor(Color.WHITE);
         mPaint.setStrokeWidth(5f);
 
@@ -62,9 +62,8 @@ public class RZCheckView extends View {
         float centerW = pieceW * 3;
         float centerH = pieceH * 4;
 
-        mPath.moveTo(centerW, centerH);
-        mPath.lineTo(pieceW * 2, pieceH * 3);
-        mPath.moveTo(centerW, centerH);
+        mPath.moveTo(pieceW * 2, pieceH * 3);
+        mPath.lineTo(centerW, centerH);
         mPath.lineTo(pieceW * 4.5f, pieceH * 2);
         canvas.drawPath(mPath, mPaint);
     }

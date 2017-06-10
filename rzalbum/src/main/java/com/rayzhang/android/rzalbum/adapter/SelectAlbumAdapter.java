@@ -36,7 +36,7 @@ public class SelectAlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == ITEM_NORMAL) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rz_sel_album_adapter_item, null);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rz_sel_album_adapter_item, parent, false);
             return new SelAlbumNView(view);
         }
         return null;

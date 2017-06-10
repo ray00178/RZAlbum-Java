@@ -1,9 +1,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.rayzhang.android.rzalbum">
 
-    <application android:allowBackup="true" android:label="@string/app_name"
+    <application
+        android:allowBackup="true"
+        android:label="@string/app_name"
         android:supportsRtl="true">
-
+        <!-- 拍照適配android7.0 up-->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.rayzhang.android.rzalbum.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/rz_file_paths">
+            </meta-data>
+        </provider>
     </application>
-
 </manifest>

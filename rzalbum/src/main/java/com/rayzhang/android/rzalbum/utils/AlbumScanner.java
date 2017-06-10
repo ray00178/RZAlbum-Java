@@ -18,7 +18,7 @@ import java.util.Map;
  */
 
 public class AlbumScanner {
-    private final String TAG = "AlbumScanner";
+    private static final String TAG = AlbumScanner.class.getSimpleName();
     private static AlbumScanner scanner;
 
     private AlbumScanner() {
@@ -83,9 +83,6 @@ public class AlbumScanner {
          */
         allImageAlbumFolder.setFolderName("所有照片");
 
-        for (String str : mCursor.getColumnNames()) {
-            //Log.d(TAG, "ColumnNames:" + str);
-        }
         if (mCursor == null) {
             return null;
         }

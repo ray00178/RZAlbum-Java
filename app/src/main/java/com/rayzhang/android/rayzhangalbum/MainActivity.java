@@ -1,7 +1,6 @@
 package com.rayzhang.android.rayzhangalbum;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -13,7 +12,7 @@ import com.rayzhang.android.rzalbum.RZAlbum;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    public static final String TAG = "RayZAlbum";
+    public static final String TAG = MainActivity.class.getSimpleName();
     private final int REQUEST_RZALBUM = 8888;
 
     @Override
@@ -32,7 +31,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case 1:
-                RZAlbum.startAlbum(this, REQUEST_RZALBUM, 10, 3, "圖庫", Color.parseColor("#e91e63"), Color.parseColor("#c2185b"));
+                RZAlbum.ofLimitCount(2)
+                        .start(this, REQUEST_RZALBUM);
                 return true;
         }
         return super.onOptionsItemSelected(item);

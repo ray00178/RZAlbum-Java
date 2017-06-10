@@ -8,7 +8,6 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.widget.TextView;
 
 import com.rayzhang.android.rzalbum.R;
 import com.rayzhang.android.rzalbum.utils.DisplayUtils;
@@ -18,7 +17,7 @@ import com.rayzhang.android.rzalbum.utils.DisplayUtils;
  * Created by Ray on 2016/11/9.
  */
 
-public class RZIconTextView extends TextView {
+public class RZIconTextView extends android.support.v7.widget.AppCompatTextView {
     /**
      *
      * 自訂義 左上右 有icon的textView
@@ -44,7 +43,6 @@ public class RZIconTextView extends TextView {
     private int topHeight;
     private int rightWidth;
     private int rightHeight;
-
     private Paint mPaint;
 
     public RZIconTextView(Context context) {
@@ -60,34 +58,21 @@ public class RZIconTextView extends TextView {
         DisplayUtils.initScreen(context);
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.RZIconTextView, defStyleAttr, 0);
-        int count = a.getIndexCount();
-        for (int i = 0; i < count; i++) {
-            int attr = a.getIndex(i);
-            if (attr == R.styleable.RZIconTextView_drawUnderLine) {
-                drawUnderLine = a.getBoolean(R.styleable.RZIconTextView_drawUnderLine, false);
-
-            } else if (attr == R.styleable.RZIconTextView_leftDrawable) {
-                leftDrawable = a.getDrawable(R.styleable.RZIconTextView_leftDrawable);
-                if (leftDrawable != null) {
-                    leftWidth = a.getDimensionPixelOffset(R.styleable.RZIconTextView_leftDrawableWidth, 25);
-                    leftHeight = a.getDimensionPixelOffset(R.styleable.RZIconTextView_leftDrawableHeight, 25);
-                }
-
-            } else if (attr == R.styleable.RZIconTextView_topDrawable) {
-                topDrawable = a.getDrawable(R.styleable.RZIconTextView_topDrawable);
-                if (topDrawable != null) {
-                    topWidth = a.getDimensionPixelOffset(R.styleable.RZIconTextView_topDrawableWidth, 25);
-                    topHeight = a.getDimensionPixelOffset(R.styleable.RZIconTextView_topDrawableHeight, 25);
-                }
-
-            } else if (attr == R.styleable.RZIconTextView_rightDrawable) {
-                rightDrawable = a.getDrawable(R.styleable.RZIconTextView_rightDrawable);
-                if (rightDrawable != null) {
-                    rightWidth = a.getDimensionPixelOffset(R.styleable.RZIconTextView_rightDrawableWidth, 25);
-                    rightHeight = a.getDimensionPixelOffset(R.styleable.RZIconTextView_rightDrawableHeight, 25);
-                }
-
-            }
+        drawUnderLine = a.getBoolean(R.styleable.RZIconTextView_drawUnderLine, false);
+        leftDrawable = a.getDrawable(R.styleable.RZIconTextView_leftDrawable);
+        if (leftDrawable != null) {
+            leftWidth = a.getDimensionPixelOffset(R.styleable.RZIconTextView_leftDrawableWidth, 25);
+            leftHeight = a.getDimensionPixelOffset(R.styleable.RZIconTextView_leftDrawableHeight, 25);
+        }
+        topDrawable = a.getDrawable(R.styleable.RZIconTextView_topDrawable);
+        if (topDrawable != null) {
+            topWidth = a.getDimensionPixelOffset(R.styleable.RZIconTextView_topDrawableWidth, 25);
+            topHeight = a.getDimensionPixelOffset(R.styleable.RZIconTextView_topDrawableHeight, 25);
+        }
+        rightDrawable = a.getDrawable(R.styleable.RZIconTextView_rightDrawable);
+        if (rightDrawable != null) {
+            rightWidth = a.getDimensionPixelOffset(R.styleable.RZIconTextView_rightDrawableWidth, 25);
+            rightHeight = a.getDimensionPixelOffset(R.styleable.RZIconTextView_rightDrawableHeight, 25);
         }
         a.recycle();
 
@@ -97,7 +82,6 @@ public class RZIconTextView extends TextView {
         mPaint.setStrokeWidth(DisplayUtils.dip2px(1));
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setStyle(Paint.Style.FILL);
-
         setCompoundDrawablePadding(DisplayUtils.dip2px(15));
     }
 

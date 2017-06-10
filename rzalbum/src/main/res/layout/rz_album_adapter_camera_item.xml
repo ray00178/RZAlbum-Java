@@ -2,13 +2,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/rzAdapterCItem"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#e6e6e6">
+    android:layout_height="120dp"
+    android:background="?android:attr/selectableItemBackground">
 
     <ImageView
         android:id="@+id/rzCImgView"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_centerInParent="true"
-        android:scaleType="fitCenter" />
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_camera_35dp" />
 </RelativeLayout>

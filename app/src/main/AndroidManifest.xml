@@ -28,10 +28,10 @@
         <activity
             android:name="com.rayzhang.android.rzalbum.RZAlbumActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="RZ_Album"
             android:screenOrientation="portrait"
             android:theme="@style/AppNoActionBar"
-            android:windowSoftInputMode="stateAlwaysHidden|stateHidden"></activity>
+            android:windowSoftInputMode="stateAlwaysHidden|stateHidden">
+        </activity>
     </application>
 
 </manifest>

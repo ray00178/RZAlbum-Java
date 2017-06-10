@@ -1,6 +1,8 @@
 package com.rayzhang.android.rzalbum.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +25,6 @@ import java.util.TreeMap;
  */
 
 public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
     private final int ITEM_CAMERA = 1;
     private final int ITEM_NORMAL = 2;
     private Context context;
@@ -32,30 +33,27 @@ public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     // 是否為第一次，用來防止oriList內容被改變
     private boolean isFirst = true;
     // 紀錄所點選到的照片
-    private TreeMap<Integer, AlbumPhoto> mutilPhotos;
+    private TreeMap<Integer, AlbumPhoto> multiPhotos;
     // 張數限制
-    private int limitCount, WH_SIZE;
-    private RelativeLayout.LayoutParams itemLp;
+    private int limitCount;
 
-    public AlbumAdapter(Context context, int spanCount, int limitCount) {
+    public AlbumAdapter(Context context, int limitCount) {
         this.context = context;
         this.limitCount = limitCount;
         DisplayUtils.initScreen(context);
-        WH_SIZE = (DisplayUtils.screenWidth - (spanCount + 1) * 2) / spanCount;
-        itemLp = new RelativeLayout.LayoutParams(WH_SIZE, WH_SIZE);
         list = new ArrayList<>();
         oriList = new ArrayList<>();
-        mutilPhotos = new TreeMap<>();
+        multiPhotos = new TreeMap<>();
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == ITEM_CAMERA) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rz_album_adapter_camera_item, null);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rz_album_adapter_camera_item, parent, false);
             return new PhotoCView(view);
         }
         if (viewType == ITEM_NORMAL) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rz_album_adapter_normal_item, null);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rz_album_adapter_normal_item, parent, false);
             return new PhotoNView(view);
         }
         return null;
@@ -65,12 +63,8 @@ public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
         switch (getItemViewType(position)) {
             case ITEM_CAMERA:
-                Glide.with(context)
-                        .load(R.drawable.ic_camera_35dp)
-                        .placeholder(R.drawable.ic_camera_35dp)
-                        .into(((PhotoCView) holder).rzCImgView);
                 if (listener != null) {
-                    ((PhotoCView) holder).rzCImgView.setOnClickListener(new View.OnClickListener() {
+                    ((PhotoCView) holder).rzAdapterCItem.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             listener.onCameraItemClick(view);
@@ -99,20 +93,20 @@ public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                             if (photo.isCheck()) {
                                 // 已選中的照片
                                 ((PhotoNView) holder).rzNClickView.setVisibility(View.GONE);
-                                mutilPhotos.remove(photo.getPhotoIndex());
+                                multiPhotos.remove(photo.getPhotoIndex());
                                 list.get(position - 1).setCheck(false);
                                 isOver = false;
                             } else {
                                 // 張數限制
-                                if (mutilPhotos.size() == limitCount) {
+                                if (multiPhotos.size() == limitCount) {
                                     isOver = true;
                                 } else {
                                     ((PhotoNView) holder).rzNClickView.setVisibility(View.VISIBLE);
-                                    mutilPhotos.put(photo.getPhotoIndex(), photo);
+                                    multiPhotos.put(photo.getPhotoIndex(), photo);
                                     list.get(position - 1).setCheck(true);
                                 }
                             }
-                            listener.onPhotoItemClick(isOver, mutilPhotos.size());
+                            listener.onPhotoItemClick(isOver, multiPhotos.size());
                         }
                     });
                 }
@@ -131,13 +125,14 @@ public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public class PhotoCView extends RecyclerView.ViewHolder {
+        private RelativeLayout rzAdapterCItem;
         private ImageView rzCImgView;
 
         public PhotoCView(View itemView) {
             super(itemView);
-            RelativeLayout rzAdapterCItem = (RelativeLayout) itemView.findViewById(R.id.rzAdapterCItem);
+            rzAdapterCItem = (RelativeLayout) itemView.findViewById(R.id.rzAdapterCItem);
             rzCImgView = (ImageView) itemView.findViewById(R.id.rzCImgView);
-            rzAdapterCItem.setLayoutParams(itemLp);
+            rzCImgView.setColorFilter(Color.LTGRAY, PorterDuff.Mode.SRC_IN);
         }
     }
 
@@ -151,10 +146,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             rzAdapterNItem = (RelativeLayout) itemView.findViewById(R.id.rzAdapterNItem);
             rzNImgView = (ImageView) itemView.findViewById(R.id.rzNImgView);
             rzNClickView = (RZCheckView) itemView.findViewById(R.id.rzNClickView);
-            //rzNClickView.setBackgroundColor(Color.argb(128, 0, 0, 0));
-            //rzNClickView.setBackgroundColor(Color.argb(128, 255, 80, 80));
             rzNClickView.setVisibility(View.GONE);
-            rzAdapterNItem.setLayoutParams(itemLp);
         }
     }
 
@@ -184,9 +176,9 @@ public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         //Log.d("RZ", "Photo mutilPhotos Be:" + mutilPhotos.size());
         if (isAdd) {
             // 如果是true就新增，反之刪除
-            mutilPhotos.put(oriList.get(photoIndex).getPhotoIndex(), oriList.get(photoIndex));
+            multiPhotos.put(oriList.get(photoIndex).getPhotoIndex(), oriList.get(photoIndex));
         } else {
-            mutilPhotos.remove(photoIndex);
+            multiPhotos.remove(photoIndex);
         }
         //Log.d("RZ", "Photo mutilPhotos Af:" + mutilPhotos.size());
         list.clear();
@@ -196,7 +188,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public ArrayList<AlbumPhoto> getPhotos() {
         ArrayList<AlbumPhoto> list = new ArrayList<>();
-        list.addAll(mutilPhotos.values());
+        list.addAll(multiPhotos.values());
         return list;
     }
 }

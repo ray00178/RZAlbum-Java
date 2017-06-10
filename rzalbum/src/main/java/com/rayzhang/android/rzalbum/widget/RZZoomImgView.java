@@ -11,14 +11,13 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver;
-import android.widget.ImageView;
 
 /**
  * Created by Ray on 2016/10/15.
  */
 
 // 自訂義可以縮放的Imgview
-public class RZZoomImgView extends ImageView implements ViewTreeObserver.OnGlobalLayoutListener,
+public class RZZoomImgView extends android.support.v7.widget.AppCompatImageView implements ViewTreeObserver.OnGlobalLayoutListener,
         ScaleGestureDetector.OnScaleGestureListener, View.OnTouchListener {
 
     private boolean mFirst;     // 第一次加載 才初始化
@@ -151,7 +150,6 @@ public class RZZoomImgView extends ImageView implements ViewTreeObserver.OnGloba
 
             int dw = d.getIntrinsicWidth();
             int dh = d.getIntrinsicHeight();
-            //Log.d("RZZoom", String.format("width:%d height:%d dw:%d dh:%d", width, height, dw, dh));
 
             // 將控件的寬高 跟 image的寬高 做比較 因為2者的大小不一定一樣
             // 並且將圖片居中顯示
@@ -196,7 +194,6 @@ public class RZZoomImgView extends ImageView implements ViewTreeObserver.OnGloba
             // 先取得移動距離
             int dx = getWidth() / 2 - dw / 2;
             int dy = getHeight() / 2 - dh / 2;
-            //Log.d("RxJava", String.format("onGlobalLayout: dx:%d dy:%d ", dx, dy) + d);
             // 進行平移
             mScaleMatrix.postTranslate(dx, dy);
             // 進行縮放 後面2個參數代表 以哪個中心點為縮放(這邊以控件的中心點)
@@ -225,7 +222,7 @@ public class RZZoomImgView extends ImageView implements ViewTreeObserver.OnGloba
 
         private float tmpScale;
 
-        public AutoScaleRunnable(float mTargetScale, float x, float y) {
+        private AutoScaleRunnable(float mTargetScale, float x, float y) {
             this.mTargetScale = mTargetScale;
             this.x = x;
             this.y = y;
@@ -263,8 +260,6 @@ public class RZZoomImgView extends ImageView implements ViewTreeObserver.OnGloba
 
     /**
      * 取得當前圖片的縮放比例
-     *
-     * @return
      */
     private float getScaleValue() {
         float[] values = new float[9];

@@ -6,7 +6,9 @@ package com.rayzhang.android.rzalbum;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.ColorInt;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 
 import java.util.Collections;
@@ -19,180 +21,92 @@ public class RZAlbum {
     private static final String TAG = RZAlbum.class.getSimpleName();
     public static final String ALBUM_LIMIT_COUNT = "ALBUM_LIMIT_COUNT";
     public static final String ALBUM_SPAN_COUNT = "ALBUM_SPAN_COUNT";
+    public static final String ALBUM_STATUSBAR_COLOR = "ALBUM_STATUSBAR_COLOR";
     public static final String ALBUM_TOOLBAR_TITLE = "ALBUM_TOOLBAR_TITLE";
     public static final String ALBUM_TOOLBAR_COLOR = "ALBUM_TOOLBAR_COLOR";
-    public static final String ALBUM_STATUS_COLOR = "ALBUM_STATUS_COLOR";
     public static final String ALBUM_IMAGE_PATH_LIST = "ALBUM_IMAGE_PATH_LIST";
 
-    /**
-     * 最多選擇30張
-     */
-    public final static int MAXCOUNT = 30;
+    private static final int MAX_COUNT = 5;
+    private Intent rzIntent;
+    private Bundle rzBundle;
 
     /**
-     * @param activity    接受文件的Activity。
-     * @param requestCode 請求碼。
+     * Init
+     * @param limitCount
+     * @return RZAlbum
      */
-    public static void startAlbum(Activity activity, int requestCode) {
-        Intent intent = new Intent(activity, RZAlbumActivity.class);
-        activity.startActivityForResult(intent, requestCode);
+    public static RZAlbum ofLimitCount(@NonNull int limitCount) {
+        if (limitCount <= 0) limitCount = MAX_COUNT;
+        return new RZAlbum(limitCount);
+    }
+
+    private RZAlbum(int limitCount) {
+        rzBundle = new Bundle();
+        rzBundle.putInt(ALBUM_LIMIT_COUNT, limitCount);
     }
 
     /**
-     * @param activity    接受文件的Activity。
-     * @param requestCode 請求碼。
-     * @param limitCount  選擇張數限制。
+     * set Adapter spanCount
+     * @param spanCount
+     * @return RZAlbum
      */
-    public static void startAlbum(Activity activity, int requestCode, int limitCount) {
-        Intent intent = new Intent(activity, RZAlbumActivity.class);
-        intent.putExtra(ALBUM_LIMIT_COUNT, limitCount);
-        activity.startActivityForResult(intent, requestCode);
+    public RZAlbum ofSpanCount(int spanCount) {
+        rzBundle.putInt(ALBUM_SPAN_COUNT, spanCount);
+        return this;
     }
 
     /**
-     * @param activity    接受文件的Activity。
-     * @param requestCode 請求碼。
-     * @param limitCount  選擇張數限制。
-     * @param spanCount   顯示幾欄。
+     * set statusBar color
+     * @param statusBarColor
+     * @return RZAlbum
      */
-    public static void startAlbum(Activity activity, int requestCode, int limitCount, int spanCount) {
-        Intent intent = new Intent(activity, RZAlbumActivity.class);
-        if (limitCount > MAXCOUNT) {
-            limitCount = MAXCOUNT;
-        }
-        intent.putExtra(ALBUM_LIMIT_COUNT, limitCount);
-        intent.putExtra(ALBUM_SPAN_COUNT, spanCount);
-        activity.startActivityForResult(intent, requestCode);
+    public RZAlbum withStatusBarColor(@ColorInt int statusBarColor) {
+        rzBundle.putInt(ALBUM_STATUSBAR_COLOR, statusBarColor);
+        return this;
     }
 
     /**
-     * @param activity     接受文件的Activity。
-     * @param requestCode  請求碼。
-     * @param limitCount   選擇張數限制。
-     * @param spanCount    顯示幾欄。
-     * @param toolbarTitle Toolbar 文字。
+     * set toolBar color
+     * @param toolBarColor
+     * @return RZAlbum
      */
-    public static void startAlbum(Activity activity, int requestCode, int limitCount, int spanCount, String toolbarTitle) {
-        Intent intent = new Intent(activity, RZAlbumActivity.class);
-        if (limitCount > MAXCOUNT) {
-            limitCount = MAXCOUNT;
-        }
-        intent.putExtra(ALBUM_LIMIT_COUNT, limitCount);
-        intent.putExtra(ALBUM_SPAN_COUNT, spanCount);
-        intent.putExtra(ALBUM_TOOLBAR_TITLE, toolbarTitle);
-        activity.startActivityForResult(intent, requestCode);
+    public RZAlbum withToolBarColor(@ColorInt int toolBarColor) {
+        rzBundle.putInt(ALBUM_TOOLBAR_COLOR, toolBarColor);
+        return this;
     }
 
     /**
-     * @param activity       接受文件的Activity。
-     * @param requestCode    請求碼。
-     * @param limitCount     選擇張數限制。
-     * @param spanCount      顯示幾欄。
-     * @param toolbarTitle   Toolbar 文字。
-     * @param toolbarColor   Toolbar 颜色。
-     * @param statusBarColor statusBar 颜色。
+     * set ToolBar Title
+     * @param toolBarTitle
+     * @return RZAlbum
      */
-    public static void startAlbum(Activity activity, int requestCode, int limitCount, int spanCount,
-                                  String toolbarTitle, @ColorInt int toolbarColor, @ColorInt int statusBarColor) {
-        if (limitCount > MAXCOUNT) {
-            limitCount = MAXCOUNT;
-        }
-        //Log.d(TAG, String.format("ToolBar:%d StatusBar:%d", toolbarColor, statusBarColor));
-        Intent intent = new Intent(activity, RZAlbumActivity.class);
-        intent.putExtra(ALBUM_LIMIT_COUNT, limitCount);
-        intent.putExtra(ALBUM_SPAN_COUNT, spanCount);
-        intent.putExtra(ALBUM_TOOLBAR_TITLE, toolbarTitle);
-        intent.putExtra(ALBUM_TOOLBAR_COLOR, toolbarColor);
-        intent.putExtra(ALBUM_STATUS_COLOR, statusBarColor);
-        activity.startActivityForResult(intent, requestCode);
+    public RZAlbum withToolBarTitle(String toolBarTitle) {
+        rzBundle.putString(ALBUM_TOOLBAR_TITLE, toolBarTitle);
+        return this;
     }
 
-    /**
-     * @param fragment    接受文件的Fragment。
-     * @param requestCode 請求碼。
-     */
-    public static void startAlbum(Fragment fragment, int requestCode) {
-        Intent intent = new Intent(fragment.getContext(), RZAlbumActivity.class);
-        fragment.startActivityForResult(intent, requestCode);
+    public void start(@NonNull Activity activity, @NonNull int requestCode) {
+        rzIntent = new Intent(activity, RZAlbumActivity.class);
+        rzIntent.putExtras(rzBundle);
+        activity.startActivityForResult(rzIntent, requestCode);
     }
 
-    /**
-     * @param fragment    接受文件的Fragment。
-     * @param requestCode 請求碼。
-     * @param limitCount  選擇張數限制。
-     */
-    public static void startAlbum(Fragment fragment, int requestCode, int limitCount) {
-        Intent intent = new Intent(fragment.getContext(), RZAlbumActivity.class);
-        if (limitCount > MAXCOUNT) {
-            limitCount = MAXCOUNT;
-        }
-        intent.putExtra(ALBUM_LIMIT_COUNT, limitCount);
-        fragment.startActivityForResult(intent, requestCode);
+    public void start(@NonNull android.app.Fragment fragment, @NonNull int requestCode) {
+        rzIntent = new Intent(fragment.getActivity(), RZAlbumActivity.class);
+        rzIntent.putExtras(rzBundle);
+        fragment.startActivityForResult(rzIntent, requestCode);
     }
 
-    /**
-     * @param fragment    接受文件的Fragment。
-     * @param requestCode 請求碼。
-     * @param limitCount  選擇張數限制。
-     * @param spanCount   顯示幾欄。
-     */
-    public static void startAlbum(Fragment fragment, int requestCode, int limitCount, int spanCount) {
-        Intent intent = new Intent(fragment.getContext(), RZAlbumActivity.class);
-        if (limitCount > MAXCOUNT) {
-            limitCount = MAXCOUNT;
-        }
-        intent.putExtra(ALBUM_LIMIT_COUNT, limitCount);
-        intent.putExtra(ALBUM_SPAN_COUNT, spanCount);
-        fragment.startActivityForResult(intent, requestCode);
-    }
-
-    /**
-     * @param fragment     接受文件的Fragment。
-     * @param requestCode  請求碼。
-     * @param limitCount   選擇張數限制。
-     * @param spanCount    顯示幾欄。
-     * @param toolbarTitle Toolbar 文字。
-     */
-    public static void startAlbum(Fragment fragment, int requestCode, int limitCount, int spanCount,
-                                  String toolbarTitle) {
-        Intent intent = new Intent(fragment.getContext(), RZAlbumActivity.class);
-        if (limitCount > MAXCOUNT) {
-            limitCount = MAXCOUNT;
-        }
-        intent.putExtra(ALBUM_LIMIT_COUNT, limitCount);
-        intent.putExtra(ALBUM_SPAN_COUNT, spanCount);
-        intent.putExtra(ALBUM_TOOLBAR_TITLE, toolbarTitle);
-        fragment.startActivityForResult(intent, requestCode);
-    }
-
-    /**
-     * @param fragment       接受文件的Fragment。
-     * @param requestCode    請求碼。
-     * @param limitCount     選擇張數限制。
-     * @param spanCount      顯示幾欄。
-     * @param toolbarTitle   Toolbar 文字。
-     * @param toolbarColor   Toolbar 颜色。
-     * @param statusBarColor statusBar 颜色。
-     */
-    public static void startAlbum(Fragment fragment, int requestCode, int limitCount, int spanCount,
-                                  String toolbarTitle, @ColorInt int toolbarColor, @ColorInt int statusBarColor) {
-        if (limitCount > MAXCOUNT) {
-            limitCount = MAXCOUNT;
-        }
-        Intent intent = new Intent(fragment.getContext(), RZAlbumActivity.class);
-        intent.putExtra(ALBUM_LIMIT_COUNT, limitCount);
-        intent.putExtra(ALBUM_SPAN_COUNT, spanCount);
-        intent.putExtra(ALBUM_TOOLBAR_TITLE, toolbarTitle);
-        intent.putExtra(ALBUM_TOOLBAR_COLOR, toolbarColor);
-        intent.putExtra(ALBUM_STATUS_COLOR, statusBarColor);
-        fragment.startActivityForResult(intent, requestCode);
+    public void start(@NonNull Fragment fragment, @NonNull int requestCode) {
+        rzIntent = new Intent(fragment.getActivity(), RZAlbumActivity.class);
+        rzIntent.putExtras(rzBundle);
+        fragment.startActivityForResult(rzIntent, requestCode);
     }
 
     /**
      * 取得照片路徑
-     *
      * @param intent
-     * @return
+     * @return List<String>
      */
     public static List<String> parseResult(Intent intent) {
         List<String> pathList = intent.getStringArrayListExtra(ALBUM_IMAGE_PATH_LIST);

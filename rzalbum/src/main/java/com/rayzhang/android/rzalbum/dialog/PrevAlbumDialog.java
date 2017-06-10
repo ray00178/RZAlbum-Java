@@ -21,11 +21,12 @@ import com.bumptech.glide.Glide;
 import com.rayzhang.android.rzalbum.R;
 import com.rayzhang.android.rzalbum.RZAlbumActivity;
 import com.rayzhang.android.rzalbum.module.bean.AlbumPhoto;
-import com.rayzhang.android.rzalbum.module.impl.OnPrevBoxClickListener;
+import com.rayzhang.android.rzalbum.module.listener.OnPrevBoxClickListener;
 import com.rayzhang.android.rzalbum.widget.RZZoomImgView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Ray on 2017/2/10.
@@ -35,12 +36,8 @@ public class PrevAlbumDialog extends AppCompatDialog implements View.OnClickList
     /**
      * 瀏覽照片
      */
-    private RZAlbumActivity mAlbumActivity;
     private OnPrevBoxClickListener listener;
     private List<AlbumPhoto> albumPhotos;
-
-    private ViewPager mViewPager;
-    private ImageView mImgView;
     private CheckBox mChkBox;
     private TextView mTextIndex;
     private ArrayList<RZZoomImgView> listViews;
@@ -52,24 +49,30 @@ public class PrevAlbumDialog extends AppCompatDialog implements View.OnClickList
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.rz_prev_album_dialog);
 
-        int statusBarHeight = -1;
+        // 2017-06-10 Hide the status bar.
+        View decorView = getWindow().getDecorView();
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
+
+        /*int statusBarHeight = -1;
         // 獲取status_bar_height資源的ID
         int resourceId = getContext().getResources().getIdentifier("status_bar_height", "dimen", "android");
         if (resourceId > 0) {
             // 根據資源ID獲取對應的尺寸值
             statusBarHeight = getContext().getResources().getDimensionPixelSize(resourceId);
-        }
+        }*/
         // 設置Dialog為全屏
         DisplayMetrics metrics = new DisplayMetrics();
         WindowManager manager = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
         manager.getDefaultDisplay().getMetrics(metrics);
         WindowManager.LayoutParams p = getWindow().getAttributes();
         p.width = metrics.widthPixels;
-        p.height = metrics.heightPixels - statusBarHeight;
+        //p.height = metrics.heightPixels - statusBarHeight;
+        // 2017-06-10 更改
+        p.height = metrics.heightPixels;
         p.gravity = Gravity.CENTER;
         this.getWindow().setAttributes(p);
 
-        this.mAlbumActivity = albumActivity;
         this.listener = listener;
         this.albumPhotos = albumPhotos;
 
@@ -88,15 +91,15 @@ public class PrevAlbumDialog extends AppCompatDialog implements View.OnClickList
     private void initView() {
         RelativeLayout rzPrevBottomView = (RelativeLayout) findViewById(R.id.rzPrevBottomView);
         rzPrevBottomView.setBackgroundColor(Color.argb(128, 0, 0, 0));
-        mImgView = (ImageView) findViewById(R.id.mImgView);
+        ImageView mImgView = (ImageView) findViewById(R.id.mImgView);
         mChkBox = (CheckBox) findViewById(R.id.mChkBox);
         mTextIndex = (TextView) findViewById(R.id.mTextIndex);
-        mTextIndex.setText(String.format("(%d/%d)", 1, listViews.size()));
+        mTextIndex.setText(String.format(Locale.getDefault(), "(%d/%d)", 1, listViews.size()));
         mChkBox.setChecked(true);
         mChkBox.setOnCheckedChangeListener(this);
 
-        mViewPager = (ViewPager) findViewById(R.id.mViewPager);
-        mViewPager.setOffscreenPageLimit(listViews.size());
+        ViewPager mViewPager = (ViewPager) findViewById(R.id.mViewPager);
+        mViewPager.setOffscreenPageLimit(listViews == null ? 0 : listViews.size());
         mViewPager.setAdapter(new PagerAdapter() {
             @Override
             public int getCount() {
@@ -132,7 +135,7 @@ public class PrevAlbumDialog extends AppCompatDialog implements View.OnClickList
                 } else {
                     mChkBox.setChecked(false);
                 }
-                mTextIndex.setText(String.format("(%d/%d)", position + 1, listViews.size()));
+                mTextIndex.setText(String.format(Locale.getDefault(), "(%d/%d)", position + 1, listViews.size()));
             }
 
             @Override
@@ -144,8 +147,7 @@ public class PrevAlbumDialog extends AppCompatDialog implements View.OnClickList
 
     @Override
     public void onClick(View view) {
-        int id = view.getId();
-        if (id == R.id.mImgView) dismiss();
+        if (view.getId() == R.id.mImgView) dismiss();
     }
 
     @Override

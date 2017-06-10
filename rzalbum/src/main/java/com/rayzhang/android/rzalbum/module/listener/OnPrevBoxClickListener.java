@@ -1,4 +1,4 @@
-package com.rayzhang.android.rzalbum.module.impl;
+package com.rayzhang.android.rzalbum.module.listener;
 
 /**
  * Created by Ray on 2017/2/10.

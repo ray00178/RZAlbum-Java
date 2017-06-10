@@ -1,14 +1,10 @@
 package com.rayzhang.android.rzalbum;
 
 import android.Manifest;
-import android.animation.Animator;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
@@ -19,7 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.animation.FastOutSlowInInterpolator;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -37,8 +33,9 @@ import android.widget.Toast;
 import com.rayzhang.android.rzalbum.adapter.AlbumAdapter;
 import com.rayzhang.android.rzalbum.adapter.SelectAlbumAdapter;
 import com.rayzhang.android.rzalbum.dialog.PrevAlbumDialog;
+import com.rayzhang.android.rzalbum.itemdecoration.RecycleItemDecoration;
 import com.rayzhang.android.rzalbum.module.bean.AlbumFolder;
-import com.rayzhang.android.rzalbum.module.impl.OnPrevBoxClickListener;
+import com.rayzhang.android.rzalbum.module.listener.OnPrevBoxClickListener;
 import com.rayzhang.android.rzalbum.utils.AlbumScanner;
 import com.rayzhang.android.rzalbum.utils.Poster;
 import com.rayzhang.android.rzalbum.widget.RZIconTextView;
@@ -49,37 +46,37 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION;
+import static android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
 
 public class RZAlbumActivity extends AppCompatActivity implements View.OnClickListener, OnPrevBoxClickListener {
     private static final String TAG = RZAlbumActivity.class.getSimpleName();
     private static final int PERMISSION_REQUEST_STORAGE = 9998;
     private static final int PERMISSION_REQUEST_CAMERA = 9999;
     private static final int ACTIVITY_REQUEST_CAMERA = 9997;
-
+    private static final int MAX_COUNT = 5;
+    private static final int SPAN_COUNT = 3;
+    private static final int STATUSBAR_COLOR = Color.parseColor("#0a7e07");
+    private static final int TOOLBAR_COLOR = Color.parseColor("#259b24");
+    private static final String TOOLBAR_TITLE = "RZAlbum";
     // 參考資料 : ExecutorService
     // http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2013/0304/958.html
     // http://www.cnblogs.com/whoislcj/p/5607734.html
     private static ExecutorService sRunnableExecutor = Executors.newSingleThreadExecutor();
 
-    private Toolbar mToolBar;
-    private RecyclerView mRecyView;
-    private RecyclerView.LayoutManager mManager;
     private AlbumAdapter adapter;
-
-    private RelativeLayout mBottomBar;
+    private RecyclerView.LayoutManager mLayoutManager;
     private RZIconTextView mTextFolder, mTextPrev;
-    private ImageView mImgDone;
-
     private String toolBarTitle;
     private int spanCount, limitCount;
     private int toolBarColor;
-    private int statusBarColor;
 
     private List<AlbumFolder> mAlbumFolders;
     private BottomSheetDialog dialog;
-    private RecyclerView mBottomRecyView;
     private SelectAlbumAdapter adapterSel;
 
     private MediaScannerConnection connection;
@@ -97,26 +94,19 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rzalbum);
 
-        Intent i = getIntent();
-        limitCount = i.getIntExtra(RZAlbum.ALBUM_LIMIT_COUNT, RZAlbum.MAXCOUNT);
-        spanCount = i.getIntExtra(RZAlbum.ALBUM_SPAN_COUNT, 2);
-        toolBarTitle = i.getStringExtra(RZAlbum.ALBUM_TOOLBAR_TITLE);
-        toolBarColor = i.getIntExtra(RZAlbum.ALBUM_TOOLBAR_COLOR, 0);
-        statusBarColor = i.getIntExtra(RZAlbum.ALBUM_STATUS_COLOR, 0);
-        //Log.d(TAG, String.format("ToolBar:%d StatusBar:%d", toolBarColor, statusBarColor));
-        if (statusBarColor == 0) {
-            statusBarColor = Color.parseColor("#bdbdbd");
-        }
-        if (toolBarColor == 0) {
-            toolBarColor = Color.parseColor("#cccccc");
-        }
+        Bundle bundle = getIntent().getExtras();
+        limitCount = bundle.getInt(RZAlbum.ALBUM_LIMIT_COUNT, MAX_COUNT);
+        spanCount = bundle.getInt(RZAlbum.ALBUM_SPAN_COUNT, SPAN_COUNT);
+        int statusBarColor = bundle.getInt(RZAlbum.ALBUM_STATUSBAR_COLOR, STATUSBAR_COLOR);
+        toolBarTitle = bundle.getString(RZAlbum.ALBUM_TOOLBAR_TITLE, TOOLBAR_TITLE);
+        toolBarColor = bundle.getInt(RZAlbum.ALBUM_TOOLBAR_COLOR, TOOLBAR_COLOR);
         initView();
         setStatusBarColor(statusBarColor);
         scanAllAlbum();
     }
 
     private void initView() {
-        mToolBar = (Toolbar) findViewById(R.id.mToolBar);
+        Toolbar mToolBar = (Toolbar) findViewById(R.id.mToolBar);
         mToolBar.setTitle(toolBarTitle);
         mToolBar.setTitleTextColor(Color.WHITE);
         mToolBar.setBackgroundColor(toolBarColor);
@@ -129,34 +119,20 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
 
-        mRecyView = (RecyclerView) findViewById(R.id.mRecyView);
-        mRecyView.addItemDecoration(new RecyclerView.ItemDecoration() {
-            @Override
-            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-                int position = parent.getChildAdapterPosition(view);
-                switch (position % spanCount) {
-                    case 0:
-                        outRect.set(2, 2, 2, 0);
-                        break;
-                    default:
-                        outRect.set(0, 2, 2, 0);
-                        break;
-                }
-            }
-        });
+        RecyclerView mRecyView = (RecyclerView) findViewById(R.id.mRecyView);
+        mLayoutManager = new GridLayoutManager(this, spanCount, GridLayoutManager.VERTICAL, false);
+        mRecyView.setLayoutManager(mLayoutManager);
         mRecyView.setHasFixedSize(true);
-        mManager = new GridLayoutManager(this, spanCount, GridLayoutManager.VERTICAL, false);
-        mRecyView.setLayoutManager(mManager);
-        adapter = new AlbumAdapter(this, spanCount, limitCount);
+        mRecyView.addItemDecoration(new RecycleItemDecoration(1, Color.argb(255, 255, 255, 255)));
+        adapter = new AlbumAdapter(this, limitCount);
         mRecyView.setAdapter(adapter);
 
-        mBottomBar = (RelativeLayout) findViewById(R.id.mBottomBar);
+        RelativeLayout mBottomBar = (RelativeLayout) findViewById(R.id.mBottomBar);
         mTextFolder = (RZIconTextView) findViewById(R.id.mTextFolder);
         mTextPrev = (RZIconTextView) findViewById(R.id.mTextPrev);
-        mImgDone = (ImageView) findViewById(R.id.mImgDone);
+        ImageView mImgDone = (ImageView) findViewById(R.id.mImgDone);
 
-        mTextPrev.setText(String.format("(%d/%d)", 0, limitCount));
-
+        mTextPrev.setText(String.format(Locale.getDefault(), "(%d/%d)", 0, limitCount));
         mBottomBar.setBackgroundColor(Color.argb(128, 0, 0, 0));
         mTextFolder.setDrawablePad(5);
         mTextPrev.setDrawablePad(5);
@@ -168,7 +144,7 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
 
     private void setStatusBarColor(int statusBarColor) {
         if (Build.VERSION.SDK_INT >= 21) {
-            final Window window = getWindow();
+            Window window = getWindow();
             if (window != null) {
                 window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
                 window.setStatusBarColor(statusBarColor);
@@ -227,49 +203,21 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
         AlbumFolder folder = mAlbumFolders.get(index);
         mTextFolder.setText(folder.getFolderName());
         adapter.addDatas(mAlbumFolders.get(index).getFolderPhotos());
-        mManager.scrollToPosition(0);
+        mLayoutManager.scrollToPosition(0);
         adapter.setOnPhotoItemClick(new AlbumAdapter.OnPhotoItemClickListener() {
             @Override
             public void onCameraItemClick(View view) {
-                cameraClickAnimation(view);
-            }
-
-            @Override
-            public void onPhotoItemClick(boolean isOver, int count) {
-                mTextPrev.setText(String.format("(%d/%d)", count, limitCount));
-                if (isOver) {
-                    Toast.makeText(RZAlbumActivity.this, String.format("最多選擇%d張", limitCount), Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-
-    private void cameraClickAnimation(View view) {
-        ObjectAnimator scaleX = ObjectAnimator.ofFloat(view, "ScaleX", 1.0f, 0.8f, 1.0f);
-        ObjectAnimator scaleY = ObjectAnimator.ofFloat(view, "ScaleY", 1.0f, 0.8f, 1.0f);
-        AnimatorSet set = new AnimatorSet();
-        set.playTogether(scaleX, scaleY);
-        set.setDuration(200);
-        set.setInterpolator(new FastOutSlowInInterpolator());
-        set.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animator) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animator) {
                 requestOpenCamera();
             }
 
             @Override
-            public void onAnimationCancel(Animator animator) {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animator) {
+            public void onPhotoItemClick(boolean isOver, int count) {
+                mTextPrev.setText(String.format(Locale.getDefault(), "(%d/%d)", count, limitCount));
+                if (isOver) {
+                    Toast.makeText(RZAlbumActivity.this, String.format(Locale.getDefault(), "最多選擇%d張", limitCount), Toast.LENGTH_SHORT).show();
+                }
             }
         });
-        set.start();
     }
 
     private void requestOpenCamera() {
@@ -303,9 +251,17 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
                 e.printStackTrace();
             }
             if (photoFile != null) {
-                // 如果指定了圖片uri，data就没有數據，如果没有指定uri，則data就返回有數據
-                // 指定圖片输出位置，若無這句則拍照後，圖片會放入內存中，由於占用内存太大導致無法剪切或者剪切後無法保存
-                camaraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    // 拍照適配Android7.0 up
+                    Uri contentUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".fileprovider", photoFile);
+                    camaraIntent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
+                    camaraIntent.addFlags(FLAG_GRANT_READ_URI_PERMISSION);
+                    camaraIntent.addFlags(FLAG_GRANT_WRITE_URI_PERMISSION);
+                } else {
+                    // 如果指定了圖片uri，data就没有數據，如果没有指定uri，則data就返回有數據
+                    // 指定圖片输出位置，若無這句則拍照後，圖片會放入內存中，由於占用内存太大導致無法剪切或者剪切後無法保存
+                    camaraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                }
                 startActivityForResult(camaraIntent, ACTIVITY_REQUEST_CAMERA);
             }
         }
@@ -313,16 +269,17 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
 
     private File createImgFile() throws IOException {
         // 照片命名
-        String timeTemp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String timeTemp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String imgFileName = "JEPG_" + timeTemp + ".jpg";
         // 建立目錄
-        File storeDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+        String filePath = Environment.getExternalStorageDirectory() + "/RZAlbum_images";
+        File storeDir = new File(filePath);
         // 如果目錄不存在就建立
         if (!storeDir.exists()) {
             storeDir.mkdir();
         }
-        // 建立檔案(存放的位置, 檔名)
         File imgFile = new File(storeDir, imgFileName);
+        // 建立檔案(存放的位置, 檔名)
         mCameraPath = imgFile.getAbsolutePath();
         return imgFile;
     }
@@ -373,14 +330,15 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
         if (mAlbumFolders.get(0).getFolderPhotos().size() == 0) return;
         if (dialog == null) {
             dialog = new BottomSheetDialog(this);
-            mBottomRecyView = (RecyclerView) LayoutInflater.from(this).inflate(R.layout.rz_sel_album_adapter, null);
+            RecyclerView mBottomRecyView = (RecyclerView) LayoutInflater.from(this).inflate(R.layout.rz_sel_album_adapter, null);
             mBottomRecyView.setHasFixedSize(true);
+            mBottomRecyView.addItemDecoration(new RecycleItemDecoration(1, Color.LTGRAY));
             RecyclerView.LayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
             mBottomRecyView.setLayoutManager(manager);
             adapterSel = new SelectAlbumAdapter(this, mAlbumFolders);
             mBottomRecyView.setAdapter(adapterSel);
             dialog.setContentView(mBottomRecyView);
-            dialog.setCancelable(false);
+            dialog.setCancelable(true);
             dialog.setCanceledOnTouchOutside(true);
             adapterSel.setOnBottomDialogItemClickListener(new SelectAlbumAdapter.OnSelAlbumItemClickListener() {
                 @Override
@@ -403,13 +361,14 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
         } else if (id == R.id.mTextPrev) {
             if (adapter.getPhotos().size() == 0) return;
             prevAlbumDialog = new PrevAlbumDialog(this, adapter.getPhotos(), this);
-            prevAlbumDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            // 2017-06-10 將statusBar Hide
+            /*prevAlbumDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialogInterface) {
                     setStatusBarColor(statusBarColor);
                 }
             });
-            setStatusBarColor(Color.BLACK);
+            setStatusBarColor(Color.BLACK);*/
             prevAlbumDialog.show();
         } else {
             Intent intent = new Intent();
@@ -427,7 +386,7 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
     public void onCheck(boolean isCheck, int photoIndex) {
         mAlbumFolders.get(0).getFolderPhotos().get(photoIndex).setCheck(isCheck);
         adapter.refreshDatas(isCheck, photoIndex, mAlbumFolders.get(saveClickPos).getFolderPhotos());
-        mTextPrev.setText(String.format("(%d/%d)", adapter.getPhotos().size(), limitCount));
+        mTextPrev.setText(String.format(Locale.getDefault(), "(%d/%d)", adapter.getPhotos().size(), limitCount));
     }
 
     @Override
@@ -482,12 +441,6 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
                                 }
                             });
                     connection.connect();
-//                    MediaScannerConnection.scanFile(this, new String[]{mCameraPath}, null,
-//                            new MediaScannerConnection.OnScanCompletedListener() {
-//                                @Override
-//                                public void onScanCompleted(String s, Uri uri) {
-//                                }
-//                            });
                     break;
             }
         }

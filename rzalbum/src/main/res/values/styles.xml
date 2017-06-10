@@ -6,9 +6,7 @@
         <item name="colorPrimary">@color/rz_colorPrimary</item>
         <item name="colorPrimaryDark">@color/rz_colorPrimaryDark</item>
         <item name="colorAccent">@color/rz_colorAccent</item>
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-    </style>
+       </style>
 
     <style name="RZ_AlbumPrevDialogStyle" parent="Theme.AppCompat.Dialog">
         <item name="android:windowFrame">@null</item>
