@@ -1,11 +1,11 @@
 RZAlbum
 ====
-The RZAlbum for android to select the photo library. And usage：<br/>
-* Support Single choice、Multiple choice、Preview、Folder switch and take pictures.  
-* For __6.0 or later__, The permissions have been handled very well，So don't worry about their own.
-* According to your project color, Setting ur StatusBarColor、ToolBarColor.
-* According to your preferences / needs, Show the number of fields and select the number of restrictions.
-* In Activity or Frangment, Can support the use.<br/>
+RZAlbum用於Android使用的照片選擇庫，相關功能如下：<br/>
+* 可支持單選、複選、預覽、照片文件夾切換及內建拍照  
+* 對於__6.0以上版本__，已將權限做很好的處理，故無需擔心要自行處理
+* 依照你的專案配色，可自訂StatusBarColor、ToolBarColor
+* 可依照你的喜好/需求，顯示欄位數量及選取張數限制
+* 無論是在Activity、Frangment，都可支持使用<br/>
 
 Screenshots 
 ====
@@ -29,7 +29,7 @@ Maven
 ```
 Usage
 ====
-  1.Androidmanifest.xml, Add the following code, label is title names.
+  1.在Androidmanifest.xml加入以下程式碼，其中label為自訂義標題名稱
   ```xml
   <activity
       android:name="com.rayzhang.android.rzalbum.RZAlbumActivity"
@@ -39,57 +39,57 @@ Usage
       android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
       android:windowSoftInputMode="stateAlwaysHidden|stateHidden" />
   ```
-  2.Androidmanifest.xml, Add the following permissions.
+  2.在Androidmanifest.xml加入以下權限
   ```xml
     <!-- 相機、讀取儲存 -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
   ```
-  3.Use RZAlbum. There are five ways to call.
+  3.調用RZAlbum，有5種調用方法
   ```java
   /**
-    * @param activity    
-    * @param requestCode
+    * @param activity    接受文件的Activity。
+    * @param requestCode 請求碼。
     */
     RZAlbum.startAlbum(this, RZALBUM_REQUESTCODE);
   
   /**
-    * @param activity    
-    * @param requestCode 
-    * @param limitCount
+    * @param activity    接受文件的Activity。
+    * @param requestCode 請求碼。
+    * @param limitCount  選擇張數限制。
     */
     RZAlbum.startAlbum(this, RZALBUM_REQUESTCODE, 5);
   
   /**
-    * @param activity    
-    * @param requestCode 
-    * @param limitCount  
-    * @param spanCount  
+    * @param activity    接受文件的Activity。
+    * @param requestCode 請求碼。
+    * @param limitCount  選擇張數限制。
+    * @param spanCount   顯示幾欄。
     */
     RZAlbum.startAlbum(this, RZALBUM_REQUESTCODE, 5, 3);
     
   /**
-    * @param activity     
-    * @param requestCode  
-    * @param limitCount   
-    * @param spanCount    
-    * @param toolbarTitle 
+    * @param activity     接受文件的Activity。
+    * @param requestCode  請求碼。
+    * @param limitCount   選擇張數限制。
+    * @param spanCount    顯示幾欄。
+    * @param toolbarTitle Toolbar 文字。
     */
     RZAlbum.startAlbum(this, RZALBUM_REQUESTCODE, 5, 3, "RZAlbum");
     
   /**
-    * @param activity       
-    * @param requestCode   
-    * @param limitCount     
-    * @param spanCount      
-    * @param toolbarTitle   
-    * @param toolbarColor   
-    * @param statusBarColor 
+    * @param activity       接受文件的Activity。
+    * @param requestCode    請求碼。
+    * @param limitCount     選擇張數限制。
+    * @param spanCount      顯示幾欄。
+    * @param toolbarTitle   Toolbar 文字。
+    * @param toolbarColor   Toolbar 颜色。
+    * @param statusBarColor statusBar 颜色。
     */
     RZAlbum.startAlbum(this, RZALBUM_REQUESTCODE, 5, 3, "RZAlbum", Color.parseColor("#e91e63"), Color.parseColor("#c2185b"));
   ```
-  4.Override Activity's/Fragment's onActivityResult method.
+  4.Override Activity/Fragment的onActivityResult方法
   ```java
   @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -105,7 +105,7 @@ Usage
   ```
 Notice
 ====
-  Due to support Material Design style and handle the image cache, So the library references the following categories.
+  由於支援Material Design的風格及處理圖片的緩存，故該庫引用下列類別庫
   ```xml
   compile 'com.android.support:design:25.1.1'
   compile 'com.android.support:recyclerview-v7:25.1.1'
@@ -129,6 +129,4 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
   ```
-Chinese description
-====
-[中文說明](https://github.com/ray00178/RayZhangAlbum/blob/master/README_zh.md)
+
