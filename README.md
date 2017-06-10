@@ -11,7 +11,7 @@ Screenshots
 ====
 <img src="https://github.com/ray00178/RayZhangAlbum/blob/master/Screenshot_1.jpg" alt="Demo_1" title="Demo_1" width="300" height="500" /><br/>
 <img src="https://github.com/ray00178/RayZhangAlbum/blob/master/Screenshot_2.jpg" alt="Demo_2" title="Demo_2" width="300" height="500" /><br/>
-<img src="https://github.com/ray00178/RayZhangAlbum/blob/master/app/src/main/res/drawable/Demo_gif.gif" alt="Demo_gif" title="Demo_gif" width="300" height="500" /><br/>
+<img src="https://github.com/ray00178/RayZhangAlbum/blob/master/Screenshot_3.gif" alt="Demo_gif" title="Demo_gif" width="300" height="500" /><br/>
 Gradle
 ====
 ```java
@@ -44,15 +44,15 @@ Usage
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
   ```
-  3.Use RZAlbum. There are five ways to call.
+  3.Use RZAlbum. There are many ways to call.
   ```java
   /**
-    * @param ofLimitCount(must)     
-    * @param ofSpanCount(choose)
-    * @param withStatusBarColor(choose)
-    * @param withToolBarColor(choose)
-    * @param withToolBarTitle(choose)
-    * @param start(must)
+    * @param ofLimitCount : (required)     
+    * @param ofSpanCount : (choose)
+    * @param withStatusBarColor : (choose)
+    * @param withToolBarColor : (choose)
+    * @param withToolBarTitle : (choose)
+    * @param start : (required)
     */
     RZAlbum.ofLimitCount(2)
             .start(this, REQUEST_RZALBUM);
