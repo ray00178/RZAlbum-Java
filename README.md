@@ -5,7 +5,8 @@ The RZAlbum for android to select the photo library. And usage：<br/>
 * For __6.0 or later__, The permissions have been handled very well，So don't worry about their own.
 * According to your project color, Setting ur StatusBarColor、ToolBarColor.
 * According to your preferences / needs, Show the number of fields and select the number of restrictions.
-* In Activity or Frangment, Can support the use.<br/>
+* In Activity or Frangment, Can support the use.
+* For __Android7.0 or later, the camera function through the FileProvider do adaptation processing.__<br/>
 
 Screenshots 
 ====
