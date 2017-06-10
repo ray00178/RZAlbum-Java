@@ -49,8 +49,8 @@ Usage
   3.調用RZAlbum，有多種使用方法
   ```java
   /**
-    * @param ofLimitCount : (必要)
-    * @param ofSpanCount : (選擇性)
+   * @param ofLimitCount : (必要)
+   * @param ofSpanCount : (選擇性)
     * @param withStatusBarColor : (選擇性)
     * @param withToolBarColor : (選擇性)
     * @param withToolBarTitle : (選擇性)
