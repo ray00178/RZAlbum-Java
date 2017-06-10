@@ -82,6 +82,15 @@ Usage
         }
     }
   ```
+  5.如果想自訂Dialog標題、內容描述及按鈕名稱，請在strings.xml覆蓋下列的名稱，即可
+  ```java
+  <string name="rz_album_dia_read_description">讀取權限允許說明</string>
+  <string name="rz_album_dia_read_message">此功能(選擇照片)必須要取得您的同意，才可以使用。是否可以允許取得？</string>
+  <string name="rz_album_dia_camera_description">拍照權限允許說明</string>
+  <string name="rz_album_dia_camera_message">此功能(拍攝照片)必須要取得您的同意，才可以使用。是否可以允許取得？</string>
+  <string name="rz_album_dia_ok">允許</string>
+  <string name="rz_album_dia_cancel">不要</string>
+  ```
 Notice
 ====
   由於支援Material Design的風格及處理圖片的緩存，故該庫引用下列類別庫
