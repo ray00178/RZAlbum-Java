@@ -15,7 +15,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -37,6 +36,7 @@ import com.rayzhang.android.rzalbum.itemdecoration.RecycleItemDecoration;
 import com.rayzhang.android.rzalbum.module.bean.AlbumFolder;
 import com.rayzhang.android.rzalbum.module.listener.OnPrevBoxClickListener;
 import com.rayzhang.android.rzalbum.utils.AlbumScanner;
+import com.rayzhang.android.rzalbum.utils.FileProviderUtils;
 import com.rayzhang.android.rzalbum.utils.Poster;
 import com.rayzhang.android.rzalbum.widget.RZIconTextView;
 
@@ -49,9 +49,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import static android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION;
-import static android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
 
 public class RZAlbumActivity extends AppCompatActivity implements View.OnClickListener, OnPrevBoxClickListener {
     private static final String TAG = RZAlbumActivity.class.getSimpleName();
@@ -251,17 +248,16 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
                 e.printStackTrace();
             }
             if (photoFile != null) {
+                // 拍照適配Android7.0 up
+                Uri fileUri = FileProviderUtils.getUriForFile(this, photoFile);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    // 拍照適配Android7.0 up
-                    Uri contentUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".fileprovider", photoFile);
-                    camaraIntent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
-                    camaraIntent.addFlags(FLAG_GRANT_READ_URI_PERMISSION);
-                    camaraIntent.addFlags(FLAG_GRANT_WRITE_URI_PERMISSION);
-                } else {
-                    // 如果指定了圖片uri，data就没有數據，如果没有指定uri，則data就返回有數據
-                    // 指定圖片输出位置，若無這句則拍照後，圖片會放入內存中，由於占用内存太大導致無法剪切或者剪切後無法保存
-                    camaraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                    FileProviderUtils.grantPermissions(this, camaraIntent, fileUri, true);
                 }
+                // 2017-06-11 更改
+                // 如果指定了圖片uri，data就没有數據，如果没有指定uri，則data就返回有數據
+                // 指定圖片输出位置，若無這句則拍照後，圖片會放入內存中，由於占用内存太大導致無法剪切或者剪切後無法保存
+                //camaraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                camaraIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
                 startActivityForResult(camaraIntent, ACTIVITY_REQUEST_CAMERA);
             }
         }
@@ -272,8 +268,8 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
         String timeTemp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String imgFileName = "JEPG_" + timeTemp + ".jpg";
         // 建立目錄
-        String filePath = Environment.getExternalStorageDirectory() + "/RZAlbum_images";
-        File storeDir = new File(filePath);
+        String imgPath = Environment.getExternalStorageDirectory() + "/RZAlbum_images";
+        File storeDir = new File(imgPath);
         // 如果目錄不存在就建立
         if (!storeDir.exists()) {
             storeDir.mkdir();

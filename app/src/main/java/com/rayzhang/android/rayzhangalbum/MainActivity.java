@@ -1,6 +1,7 @@
 package com.rayzhang.android.rayzhangalbum;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -32,6 +33,10 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case 1:
                 RZAlbum.ofLimitCount(2)
+                        .ofSpanCount(3)
+                        .withStatusBarColor(Color.parseColor("#AD1457"))
+                        .withToolBarColor(Color.parseColor("#D81B60"))
+                        .withToolBarTitle("Album")
                         .start(this, REQUEST_RZALBUM);
                 return true;
         }

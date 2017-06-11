@@ -33,7 +33,7 @@ public class RZAlbum {
     /**
      * Init
      * @param limitCount
-     * @return RZAlbum
+     * @return
      */
     public static RZAlbum ofLimitCount(@NonNull int limitCount) {
         if (limitCount <= 0) limitCount = MAX_COUNT;
@@ -48,7 +48,7 @@ public class RZAlbum {
     /**
      * set Adapter spanCount
      * @param spanCount
-     * @return RZAlbum
+     * @return
      */
     public RZAlbum ofSpanCount(int spanCount) {
         rzBundle.putInt(ALBUM_SPAN_COUNT, spanCount);
@@ -58,7 +58,7 @@ public class RZAlbum {
     /**
      * set statusBar color
      * @param statusBarColor
-     * @return RZAlbum
+     * @return
      */
     public RZAlbum withStatusBarColor(@ColorInt int statusBarColor) {
         rzBundle.putInt(ALBUM_STATUSBAR_COLOR, statusBarColor);
@@ -68,7 +68,7 @@ public class RZAlbum {
     /**
      * set toolBar color
      * @param toolBarColor
-     * @return RZAlbum
+     * @return
      */
     public RZAlbum withToolBarColor(@ColorInt int toolBarColor) {
         rzBundle.putInt(ALBUM_TOOLBAR_COLOR, toolBarColor);
@@ -78,7 +78,7 @@ public class RZAlbum {
     /**
      * set ToolBar Title
      * @param toolBarTitle
-     * @return RZAlbum
+     * @return
      */
     public RZAlbum withToolBarTitle(String toolBarTitle) {
         rzBundle.putString(ALBUM_TOOLBAR_TITLE, toolBarTitle);
@@ -106,7 +106,7 @@ public class RZAlbum {
     /**
      * 取得照片路徑
      * @param intent
-     * @return List<String>
+     * @return
      */
     public static List<String> parseResult(Intent intent) {
         List<String> pathList = intent.getStringArrayListExtra(ALBUM_IMAGE_PATH_LIST);

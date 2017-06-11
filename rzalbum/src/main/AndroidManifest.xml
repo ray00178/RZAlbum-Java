@@ -8,7 +8,7 @@
         <!-- 拍照適配android7.0 up-->
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.rayzhang.android.rzalbum.fileprovider"
+            android:authorities="${applicationId}.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
