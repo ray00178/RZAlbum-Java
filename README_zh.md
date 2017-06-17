@@ -16,7 +16,7 @@ Screenshots
 Gradle
 ====
 ```java
-compile 'com.rayzhang.android:rzalbum:1.0.6'
+compile 'com.rayzhang.android:rzalbum:1.1.0'
 ```
 Maven
 ====
@@ -24,13 +24,13 @@ Maven
 <dependency>
   <groupId>com.rayzhang.android</groupId>
   <artifactId>rzalbum</artifactId>
-  <version>1.0.6</version>
+  <version>1.1.0</version>
   <type>pom</type>
 </dependency>
 ```
 Usage
 ====
-  1.在Androidmanifest.xml加入以下程式碼，其中label為自訂義標題名稱
+  1.在Androidmanifest.xml加入以下程式碼
   ```xml
   <activity
       android:name="com.rayzhang.android.rzalbum.RZAlbumActivity"
@@ -49,23 +49,26 @@ Usage
   3.調用RZAlbum，有多種使用方法
   ```java
   /**
-   * @param ofLimitCount : (必要)
-   * @param ofSpanCount : (選擇性)
-    * @param withStatusBarColor : (選擇性)
-    * @param withToolBarColor : (選擇性)
-    * @param withToolBarTitle : (選擇性)
+   * @param ofAppName : (必要)
+   * @param setLimitCount : (選擇性)
+   * @param setSpanCount : (選擇性)
+    * @param setStatusBarColor : (選擇性)
+    * @param setToolBarColor : (選擇性)
+    * @param setToolBarTitle : (選擇性)
     * @param start : (必要)
     */
-    RZAlbum.ofLimitCount(2)
-            .ofSpanCount(3)
-            .withStatusBarColor(Color.parseColor("#AD1457"))
-            .withToolBarColor(Color.parseColor("#D81B60"))
-            .withToolBarTitle("Album")
+    RZAlbum.ofAppName("RZAlbum")
             .start(this, REQUEST_RZALBUM);
   /**
-    * 或者簡單使用(如下)
+    * 或者搭配使用(如下)
     */
-    RZAlbum.ofLimitCount(2)
+    RZAlbum.ofAppName("RZAlbum")
+            .setLimitCount(2)
+            .setSpanCount(3)
+            .setStatusBarColor(Color.parseColor("#AD1457"))
+            .setToolBarColor(Color.parseColor("#D81B60"))
+            .setToolBarTitle("Album")
+            .setDialogIcon(R.drawable.ic_bird_shape_30_3dp)
             .start(this, REQUEST_RZALBUM);
 ```
 4.Override Activity/Fragment的onActivityResult方法
@@ -85,9 +88,9 @@ Usage
 5.如果想自訂Dialog標題、內容描述及按鈕名稱，請在strings.xml覆蓋下列的名稱，即可
 ```xml
   <string name="rz_album_dia_read_description">讀取權限允許說明</string>
-  <string name="rz_album_dia_read_message">此功能(選擇照片)必須要取得您的同意，才可以使用。是否可以允許取得？</string>
+  <string name="rz_album_dia_read_message">選擇照片 必須要取得您的同意，才可以使用。是否可以允許取得？</string>
   <string name="rz_album_dia_camera_description">拍照權限允許說明</string>
-  <string name="rz_album_dia_camera_message">此功能(拍攝照片)必須要取得您的同意，才可以使用。是否可以允許取得？</string>
+  <string name="rz_album_dia_camera_message">拍攝照片 必須要取得您的同意，才可以使用。是否可以允許取得？</string>
   <string name="rz_album_dia_ok">允許</string>
   <string name="rz_album_dia_cancel">不要</string>
 ```
