@@ -16,7 +16,7 @@ Screenshots
 Gradle
 ====
 ```java
-compile 'com.rayzhang.android:rzalbum:1.0.6'
+compile 'com.rayzhang.android:rzalbum:1.1.0'
 ```
 Maven
 ====
@@ -24,13 +24,13 @@ Maven
 <dependency>
   <groupId>com.rayzhang.android</groupId>
   <artifactId>rzalbum</artifactId>
-  <version>1.0.6</version>
+  <version>1.1.0</version>
   <type>pom</type>
 </dependency>
 ```
 Usage
 ====
-  1.Androidmanifest.xml, Add the following code, label is title names.
+  1.Androidmanifest.xml, Add the following code.
   ```xml
   <activity
       android:name="com.rayzhang.android.rzalbum.RZAlbumActivity"
@@ -48,23 +48,26 @@ Usage
   3.Use RZAlbum. There are many ways to call.
   ```java
   /**
-    * @param ofLimitCount : (required)     
-    * @param ofSpanCount : (choose)
-    * @param withStatusBarColor : (choose)
-    * @param withToolBarColor : (choose)
-    * @param withToolBarTitle : (choose)
+    * @param ofAppName : (required)
+    * @param setLimitCount : (choose)     
+    * @param setSpanCount : (choose)
+    * @param setStatusBarColor : (choose)
+    * @param setToolBarColor : (choose)
+    * @param setToolBarTitle : (choose)
     * @param start : (required)
     */
-    RZAlbum.ofLimitCount(2)
+    RZAlbum.ofAppName("RZAlbum")
             .start(this, REQUEST_RZALBUM);
     /**
       * Or Like this
       */
-    RZAlbum.ofLimitCount(2)
-            .ofSpanCount(3)
-            .withStatusBarColor(Color.parseColor("#AD1457"))
-            .withToolBarColor(Color.parseColor("#D81B60"))
-            .withToolBarTitle("Album")
+    RZAlbum.ofAppName("RZAlbum")
+            .setLimitCount(2)
+            .setSpanCount(3)
+            .setStatusBarColor(Color.parseColor("#AD1457"))
+            .setToolBarColor(Color.parseColor("#D81B60"))
+            .setToolBarTitle("Album")
+            .setDialogIcon(R.drawable.ic_bird_shape_30_3dp)
             .start(this, REQUEST_RZALBUM);
   ```
   4.Override Activity's/Fragment's onActivityResult method.
