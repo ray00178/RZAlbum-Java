@@ -16,7 +16,7 @@ Screenshots
 Gradle
 ====
 ```java
-compile 'com.rayzhang.android:rzalbum:1.0.5'
+compile 'com.rayzhang.android:rzalbum:1.0.6'
 ```
 Maven
 ====
@@ -24,7 +24,7 @@ Maven
 <dependency>
   <groupId>com.rayzhang.android</groupId>
   <artifactId>rzalbum</artifactId>
-  <version>1.0.5</version>
+  <version>1.0.6</version>
   <type>pom</type>
 </dependency>
 ```
