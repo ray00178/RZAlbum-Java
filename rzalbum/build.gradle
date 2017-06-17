@@ -3,7 +3,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 // 這個版本是區分庫版本的，因此當我們需要更新library時記得修改這個版本
-version = "1.0.5"
+version = "1.1.0"
 
 android {
     compileSdkVersion 25

@@ -3,6 +3,7 @@ package com.rayzhang.android.rzalbum;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.MediaScannerConnection;
@@ -60,6 +61,7 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
     private static final int STATUSBAR_COLOR = Color.parseColor("#0a7e07");
     private static final int TOOLBAR_COLOR = Color.parseColor("#259b24");
     private static final String TOOLBAR_TITLE = "RZAlbum";
+    private static final String APP_NAME = "App名稱";
     // 參考資料 : ExecutorService
     // http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2013/0304/958.html
     // http://www.cnblogs.com/whoislcj/p/5607734.html
@@ -68,9 +70,15 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
     private AlbumAdapter adapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private RZIconTextView mTextFolder, mTextPrev;
-    private String toolBarTitle;
+    private String appName, toolBarTitle;
     private int spanCount, limitCount;
     private int toolBarColor;
+    private int dialogIcon;
+
+    private SharedPreferences sp;
+    private static final String SP_RZALBUM = "SP_RZALBUM";
+    private static final String SP_DENIED_READ_COUNT = "SP_DENIED_READ_COUNT";
+    private static final String SP_DENIED_CAMERA_COUNT = "SP_DENIED_CAMERA_COUNT";
 
     private List<AlbumFolder> mAlbumFolders;
     private BottomSheetDialog dialog;
@@ -91,12 +99,16 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rzalbum);
 
+        sp = getSharedPreferences(SP_RZALBUM, MODE_PRIVATE);
+
         Bundle bundle = getIntent().getExtras();
+        appName = bundle.getString(RZAlbum.ALBUM_APP_NAME, APP_NAME);
         limitCount = bundle.getInt(RZAlbum.ALBUM_LIMIT_COUNT, MAX_COUNT);
         spanCount = bundle.getInt(RZAlbum.ALBUM_SPAN_COUNT, SPAN_COUNT);
         int statusBarColor = bundle.getInt(RZAlbum.ALBUM_STATUSBAR_COLOR, STATUSBAR_COLOR);
         toolBarTitle = bundle.getString(RZAlbum.ALBUM_TOOLBAR_TITLE, TOOLBAR_TITLE);
         toolBarColor = bundle.getInt(RZAlbum.ALBUM_TOOLBAR_COLOR, TOOLBAR_COLOR);
+        dialogIcon = bundle.getInt(RZAlbum.ALBUM_DIALOG_ICON, R.drawable.ic_info_description_30_3dp);
         initView();
         setStatusBarColor(statusBarColor);
         scanAllAlbum();
@@ -156,7 +168,11 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
             if (permissionResult != PackageManager.PERMISSION_GRANTED) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     // 第一次被使用者拒絕後，這邊做些解釋的動作
-                    showDescriptionDialog(1);
+                    if (getDeniedCount(1, true) >= 2) {
+                        showIsDenideDialog(1);
+                    } else {
+                        showDescriptionDialog(1);
+                    }
                 } else {
                     // 第一次詢問
                     ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
@@ -222,7 +238,11 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
             int permissionResult = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
             if (permissionResult != PackageManager.PERMISSION_GRANTED) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
-                    showDescriptionDialog(2);
+                    if (getDeniedCount(2, true) >= 2) {
+                        showIsDenideDialog(2);
+                    } else {
+                        showDescriptionDialog(2);
+                    }
                 } else {
                     ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA},
                             PERMISSION_REQUEST_CAMERA);
@@ -293,7 +313,7 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
         }
         new AlertDialog.Builder(this)
                 .setCancelable(false)
-                .setIcon(R.drawable.ic_info_description_35dp)
+                .setIcon(dialogIcon)
                 .setTitle(title)
                 .setMessage(msg)
                 .setPositiveButton(R.string.rz_album_dia_ok, new DialogInterface.OnClickListener() {
@@ -314,6 +334,34 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         // 退出activity
+                        if (type == 1) {
+                            RZAlbumActivity.this.finish();
+                        }
+                    }
+                })
+                .show();
+    }
+
+    /**
+     * 權限拒絕已達2次 or 權限已被永久拒絕
+     * type = 1(讀取記憶卡) type = 2(拍攝照片)
+     */
+    private void showIsDenideDialog(final int type) {
+        String title = getResources().getString(R.string.rz_album_dia_read_description_denied);
+        String msg = String.format(Locale.TAIWAN, getResources().getString(R.string.rz_album_dia_read_message_denied), appName);
+        if (type == 2) {
+            title = getResources().getString(R.string.rz_album_dia_camera_description_denied);
+            msg = String.format(Locale.TAIWAN, getResources().getString(R.string.rz_album_dia_camera_message_denied), appName);
+        }
+        new AlertDialog.Builder(this)
+                .setCancelable(false)
+                .setIcon(dialogIcon)
+                .setTitle(title)
+                .setMessage(msg)
+                .setPositiveButton(R.string.rz_album_dia_know, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
                         if (type == 1) {
                             RZAlbumActivity.this.finish();
                         }
@@ -393,20 +441,46 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
                 if (permissionResult == PackageManager.PERMISSION_GRANTED) {
                     sRunnableExecutor.execute(scanner);
                 } else {
-                    showDescriptionDialog(1);
+                    if (getDeniedCount(1, false) >= 2) {
+                        showIsDenideDialog(1);
+                    } else {
+                        showDescriptionDialog(1);
+                    }
                 }
                 break;
             case PERMISSION_REQUEST_CAMERA:
                 if (permissionResult == PackageManager.PERMISSION_GRANTED) {
                     openCamera();
                 } else {
-                    showDescriptionDialog(2);
+                    if (getDeniedCount(2, false) >= 2) {
+                        showIsDenideDialog(2);
+                    } else {
+                        showDescriptionDialog(2);
+                    }
                 }
                 break;
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
                 break;
         }
+    }
+
+    private int getDeniedCount(int type, boolean isGet) {
+        int count = sp.getInt(SP_DENIED_READ_COUNT, 0);
+        if (type == 2) {
+            count = sp.getInt(SP_DENIED_CAMERA_COUNT, 0);
+        }
+        if (!isGet && count != 2) {
+            count += 1;
+            SharedPreferences.Editor editor = sp.edit();
+            if (type == 1) {
+                editor.putInt(SP_DENIED_READ_COUNT, count);
+            } else {
+                editor.putInt(SP_DENIED_CAMERA_COUNT, count);
+            }
+            editor.apply();
+        }
+        return count;
     }
 
     @Override
@@ -440,11 +514,6 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
                     break;
             }
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
     }
 
     @Override
