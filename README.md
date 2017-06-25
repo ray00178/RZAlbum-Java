@@ -1,4 +1,4 @@
-RZAlbum
+RZAlbum ![](http://arminray.ga/image/rzalbum_planform.svg) ![](http://arminray.ga/image/rzalbum_download.svg) ![](http://arminray.ga/image/rzalbum_license.svg)
 ====
 The RZAlbum for android to select the photo library. And usage：<br/>
 * Support Single choice、Multiple choice、Preview、Folder switch and take pictures.  
