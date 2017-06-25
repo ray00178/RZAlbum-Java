@@ -1,4 +1,4 @@
-RZAlbum
+RZAlbum ![](http://arminray.ga/image/rzalbum_planform.svg) ![](http://arminray.ga/image/rzalbum_download.svg) ![](http://arminray.ga/image/rzalbum_license.svg)
 ====
 RZAlbum用於Android使用的照片選擇庫，相關功能如下：<br/>
 * 可支持單選、複選、預覽、照片文件夾切換及內建拍照  
