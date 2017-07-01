@@ -1,4 +1,4 @@
-RZAlbum ![](http://arminray.ga/image/rzalbum_planform.svg) ![](http://arminray.ga/image/rzalbum_download.svg) ![](http://arminray.ga/image/rzalbum_license.svg)
+RZAlbum ![](http://arminray.ga/image/rzalbum_planform.svg) ![](http://arminray.ga/image/rzalbum_version.svg) ![](http://arminray.ga/image/rzalbum_license.svg)
 ====
 The RZAlbum for android to select the photo library. And usage：<br/>
 * Support Single choice、Multiple choice、Preview、Folder switch and take pictures.  
@@ -10,13 +10,14 @@ The RZAlbum for android to select the photo library. And usage：<br/>
 
 Screenshots 
 ====
-<img src="https://github.com/ray00178/RayZhangAlbum/blob/master/Screenshot_1.jpg" alt="Demo_1" title="Demo_1" width="300" height="500" /><br/>
-<img src="https://github.com/ray00178/RayZhangAlbum/blob/master/Screenshot_2.jpg" alt="Demo_2" title="Demo_2" width="300" height="500" /><br/>
+Default screenshots<br/><br/>
+![](https://github.com/ray00178/RayZhangAlbum/blob/master/Screenshot_1.jpg)
+![](https://github.com/ray00178/RayZhangAlbum/blob/master/Screenshot_2.jpg)<br/>
 <img src="https://github.com/ray00178/RayZhangAlbum/blob/master/Screenshot_3.gif" alt="Demo_gif" title="Demo_gif" width="300" height="500" /><br/>
 Gradle
 ====
 ```java
-compile 'com.rayzhang.android:rzalbum:1.1.0'
+compile 'com.rayzhang.android:rzalbum:1.1.1'
 ```
 Maven
 ====
@@ -24,7 +25,7 @@ Maven
 <dependency>
   <groupId>com.rayzhang.android</groupId>
   <artifactId>rzalbum</artifactId>
-  <version>1.1.0</version>
+  <version>1.1.1</version>
   <type>pom</type>
 </dependency>
 ```
@@ -32,12 +33,23 @@ Usage
 ====
   1.Androidmanifest.xml, Add the following code.
   ```xml
+  <!-- android:theme = Set according to your style
+  <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+      <item name="colorPrimary">@color/colorPrimary</item>
+      <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+      <item name="colorAccent">@color/colorAccent</item>
+  </style>
+
+  <style name="AppNoActionBar" parent="AppTheme">
+      <item name="windowActionBar">false</item>
+      <item name="windowNoTitle">true</item>
+  </style> -->
   <activity
-      android:name="com.rayzhang.android.rzalbum.RZAlbumActivity"
+     android:name="com.rayzhang.android.rzalbum.RZAlbumActivity"
       android:configChanges="orientation|keyboardHidden|screenSize"
-      android:screenOrientation="portrait"
-      android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
-      android:windowSoftInputMode="stateAlwaysHidden|stateHidden" />
+     android:screenOrientation="portrait"
+      android:theme="@style/AppNoActionBar"
+      android:windowSoftInputMode="stateAlwaysHidden|stateHidden"/>
   ```
   2.Androidmanifest.xml, Add the following permissions.
   ```xml
@@ -49,11 +61,12 @@ Usage
   ```java
   /**
     * @param ofAppName : (required)
-    * @param setLimitCount : (choose)     
-    * @param setSpanCount : (choose)
-    * @param setStatusBarColor : (choose)
-    * @param setToolBarColor : (choose)
-    * @param setToolBarTitle : (choose)
+    * @param setLimitCount : (choose) (default:5)     
+    * @param setSpanCount : (choose) (default:3) 
+    * @param setStatusBarColor : (choose) (default:#0a7e07)
+    * @param setToolBarColor : (choose)  (default:#259b24)
+    * @param setToolBarTitle : (choose)  (default:RZAlbum)
+    * @param showCamera : (choose)  (default:true)
     * @param start : (required)
     */
     RZAlbum.ofAppName("RZAlbum")
@@ -68,6 +81,7 @@ Usage
             .setToolBarColor(Color.parseColor("#D81B60"))
             .setToolBarTitle("Album")
             .setDialogIcon(R.drawable.ic_bird_shape_30_3dp)
+            .showCamera(false)
             .start(this, REQUEST_RZALBUM);
   ```
   4.Override Activity's/Fragment's onActivityResult method.
@@ -86,12 +100,12 @@ Usage
   ```
   5.If you want to customize the Dialog title, description, and button name, please overwrite the following names in strings.xml.
   ```xml
-  <string name="rz_album_dia_read_description">(Enter name that u want)</string>
-  <string name="rz_album_dia_read_message">(Enter name that u want)</string>
-  <string name="rz_album_dia_camera_description">(Enter name that u want)</string>
-  <string name="rz_album_dia_camera_message">(Enter name that u want)</string>
-  <string name="rz_album_dia_ok">(Enter name that u want)</string>
-  <string name="rz_album_dia_cancel">(Enter name that u want)</string>
+  <string name="rz_album_dia_read_description">(Enter something that u want)</string>
+  <string name="rz_album_dia_read_message">(Enter something that u want)</string>
+  <string name="rz_album_dia_camera_description">(Enter something that u want)</string>
+  <string name="rz_album_dia_camera_message">(Enter something that u want)</string>
+  <string name="rz_album_dia_ok">(Enter something that u want)</string>
+  <string name="rz_album_dia_cancel">(Enter something that u want)</string>
   ```
 Notice
 ====
