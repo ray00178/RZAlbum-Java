@@ -20,14 +20,15 @@ import java.util.List;
  */
 public class RZAlbum {
     private static final String TAG = RZAlbum.class.getSimpleName();
-    public static final String ALBUM_APP_NAME = "ALBUM_APP_NAME";
-    public static final String ALBUM_LIMIT_COUNT = "ALBUM_LIMIT_COUNT";
-    public static final String ALBUM_SPAN_COUNT = "ALBUM_SPAN_COUNT";
-    public static final String ALBUM_STATUSBAR_COLOR = "ALBUM_STATUSBAR_COLOR";
-    public static final String ALBUM_TOOLBAR_TITLE = "ALBUM_TOOLBAR_TITLE";
-    public static final String ALBUM_TOOLBAR_COLOR = "ALBUM_TOOLBAR_COLOR";
-    public static final String ALBUM_DIALOG_ICON = "ALBUM_DIALOG_ICON";
-    public static final String ALBUM_IMAGE_PATH_LIST = "ALBUM_IMAGE_PATH_LIST";
+    protected static final String ALBUM_APP_NAME = "ALBUM_APP_NAME";
+    protected static final String ALBUM_LIMIT_COUNT = "ALBUM_LIMIT_COUNT";
+    protected static final String ALBUM_SPAN_COUNT = "ALBUM_SPAN_COUNT";
+    protected static final String ALBUM_STATUSBAR_COLOR = "ALBUM_STATUSBAR_COLOR";
+    protected static final String ALBUM_TOOLBAR_TITLE = "ALBUM_TOOLBAR_TITLE";
+    protected static final String ALBUM_TOOLBAR_COLOR = "ALBUM_TOOLBAR_COLOR";
+    protected static final String ALBUM_DIALOG_ICON = "ALBUM_DIALOG_ICON";
+    protected static final String ALBUM_IMAGE_PATH_LIST = "ALBUM_IMAGE_PATH_LIST";
+    protected static final String ALBUN_SHOW_CAMERA = "ALBUN_SHOW_CAMERA";
 
     private static final int MAX_COUNT = 5;
     private Intent rzIntent;
@@ -112,6 +113,11 @@ public class RZAlbum {
      */
     public RZAlbum setDialogIcon(@DrawableRes int resID) {
         rzBundle.putInt(ALBUM_DIALOG_ICON, resID);
+        return this;
+    }
+
+    public RZAlbum showCamera(boolean isShow) {
+        rzBundle.putBoolean(ALBUN_SHOW_CAMERA, isShow);
         return this;
     }
 

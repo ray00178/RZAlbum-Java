@@ -15,16 +15,14 @@
             android:id="@+id/mToolBar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:layout_scrollFlags="scroll|enterAlways">
-        </android.support.v7.widget.Toolbar>
+            app:layout_scrollFlags="scroll|enterAlways" />
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/mRecyView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-    </android.support.v7.widget.RecyclerView>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <!-- 底部控制列 -->
     <RelativeLayout
@@ -33,7 +31,7 @@
         android:layout_height="?attr/actionBarSize"
         android:layout_gravity="bottom"
         android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:paddingRight="20dp"
         app:layout_behavior="@string/rz_scrollhide_behavior">
 
         <com.rayzhang.android.rzalbum.widget.RZIconTextView
@@ -45,7 +43,7 @@
             android:gravity="center_vertical"
             android:maxLines="2"
             android:textColor="@android:color/white"
-            android:textSize="16sp"
+            android:textSize="14sp"
             app:rightDrawable="@drawable/ic_down_35dp"
             app:rightDrawableHeight="15dp"
             app:rightDrawableWidth="15dp" />

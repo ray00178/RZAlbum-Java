@@ -78,13 +78,13 @@ public class SelectAlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         return ITEM_NORMAL;
     }
 
-    public class SelAlbumNView extends RecyclerView.ViewHolder {
+    private class SelAlbumNView extends RecyclerView.ViewHolder {
         private RelativeLayout rzSelAdapterItem;
         private ImageView mImgView;
         private TextView mTextFolder;
         private RadioButton mRadioBut;
 
-        public SelAlbumNView(View itemView) {
+        private SelAlbumNView(View itemView) {
             super(itemView);
 
             rzSelAdapterItem = (RelativeLayout) itemView.findViewById(R.id.rzSelAdapterItem);

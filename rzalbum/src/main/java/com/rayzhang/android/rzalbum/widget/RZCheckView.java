@@ -1,12 +1,10 @@
 package com.rayzhang.android.rzalbum.widget;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -34,12 +32,6 @@ public class RZCheckView extends View {
         init();
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public RZCheckView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        init();
-    }
-
     private void init() {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setDither(true);
@@ -56,7 +48,10 @@ public class RZCheckView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        drawOK(canvas);
+    }
 
+    private void drawOK(Canvas canvas) {
         float pieceW = getWidth() / 6;
         float pieceH = getHeight() / 6;
         float centerW = pieceW * 3;

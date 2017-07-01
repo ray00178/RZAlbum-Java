@@ -3,7 +3,6 @@ package com.rayzhang.android.rzalbum;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.MediaScannerConnection;
@@ -74,11 +73,7 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
     private int spanCount, limitCount;
     private int toolBarColor;
     private int dialogIcon;
-
-    private SharedPreferences sp;
-    private static final String SP_RZALBUM = "SP_RZALBUM";
-    private static final String SP_DENIED_READ_COUNT = "SP_DENIED_READ_COUNT";
-    private static final String SP_DENIED_CAMERA_COUNT = "SP_DENIED_CAMERA_COUNT";
+    private boolean isShow;
 
     private List<AlbumFolder> mAlbumFolders;
     private BottomSheetDialog dialog;
@@ -99,8 +94,6 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rzalbum);
 
-        sp = getSharedPreferences(SP_RZALBUM, MODE_PRIVATE);
-
         Bundle bundle = getIntent().getExtras();
         appName = bundle.getString(RZAlbum.ALBUM_APP_NAME, APP_NAME);
         limitCount = bundle.getInt(RZAlbum.ALBUM_LIMIT_COUNT, MAX_COUNT);
@@ -109,6 +102,7 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
         toolBarTitle = bundle.getString(RZAlbum.ALBUM_TOOLBAR_TITLE, TOOLBAR_TITLE);
         toolBarColor = bundle.getInt(RZAlbum.ALBUM_TOOLBAR_COLOR, TOOLBAR_COLOR);
         dialogIcon = bundle.getInt(RZAlbum.ALBUM_DIALOG_ICON, R.drawable.ic_info_description_30_3dp);
+        isShow = bundle.getBoolean(RZAlbum.ALBUN_SHOW_CAMERA, true);
         initView();
         setStatusBarColor(statusBarColor);
         scanAllAlbum();
@@ -133,7 +127,7 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
         mRecyView.setLayoutManager(mLayoutManager);
         mRecyView.setHasFixedSize(true);
         mRecyView.addItemDecoration(new RecycleItemDecoration(1, Color.argb(255, 255, 255, 255)));
-        adapter = new AlbumAdapter(this, limitCount);
+        adapter = new AlbumAdapter(this, limitCount, isShow);
         mRecyView.setAdapter(adapter);
 
         RelativeLayout mBottomBar = (RelativeLayout) findViewById(R.id.mBottomBar);
@@ -168,11 +162,7 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
             if (permissionResult != PackageManager.PERMISSION_GRANTED) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     // 第一次被使用者拒絕後，這邊做些解釋的動作
-                    if (getDeniedCount(1, true) >= 2) {
-                        showIsDenideDialog(1);
-                    } else {
-                        showDescriptionDialog(1);
-                    }
+                    showDescriptionDialog(1);
                 } else {
                     // 第一次詢問
                     ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
@@ -238,11 +228,7 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
             int permissionResult = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
             if (permissionResult != PackageManager.PERMISSION_GRANTED) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
-                    if (getDeniedCount(2, true) >= 2) {
-                        showIsDenideDialog(2);
-                    } else {
-                        showDescriptionDialog(2);
-                    }
+                    showDescriptionDialog(2);
                 } else {
                     ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA},
                             PERMISSION_REQUEST_CAMERA);
@@ -441,10 +427,10 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
                 if (permissionResult == PackageManager.PERMISSION_GRANTED) {
                     sRunnableExecutor.execute(scanner);
                 } else {
-                    if (getDeniedCount(1, false) >= 2) {
-                        showIsDenideDialog(1);
-                    } else {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[0])) {
                         showDescriptionDialog(1);
+                    } else {
+                        showIsDenideDialog(1);
                     }
                 }
                 break;
@@ -452,10 +438,10 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
                 if (permissionResult == PackageManager.PERMISSION_GRANTED) {
                     openCamera();
                 } else {
-                    if (getDeniedCount(2, false) >= 2) {
-                        showIsDenideDialog(2);
-                    } else {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[0])) {
                         showDescriptionDialog(2);
+                    } else {
+                        showIsDenideDialog(2);
                     }
                 }
                 break;
@@ -463,24 +449,6 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
                 break;
         }
-    }
-
-    private int getDeniedCount(int type, boolean isGet) {
-        int count = sp.getInt(SP_DENIED_READ_COUNT, 0);
-        if (type == 2) {
-            count = sp.getInt(SP_DENIED_CAMERA_COUNT, 0);
-        }
-        if (!isGet && count != 2) {
-            count += 1;
-            SharedPreferences.Editor editor = sp.edit();
-            if (type == 1) {
-                editor.putInt(SP_DENIED_READ_COUNT, count);
-            } else {
-                editor.putInt(SP_DENIED_CAMERA_COUNT, count);
-            }
-            editor.apply();
-        }
-        return count;
     }
 
     @Override

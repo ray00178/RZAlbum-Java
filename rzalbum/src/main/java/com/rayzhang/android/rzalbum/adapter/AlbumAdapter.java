@@ -25,21 +25,24 @@ import java.util.TreeMap;
  */
 
 public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private final int ITEM_CAMERA = 1;
-    private final int ITEM_NORMAL = 2;
+    private static final int ITEM_CAMERA = 1;
+    private static final int ITEM_NORMAL = 2;
     private Context context;
     // list : 每次都會改變 ; oriList : 儲存所有的照片
     private List<AlbumPhoto> list, oriList;
     // 是否為第一次，用來防止oriList內容被改變
     private boolean isFirst = true;
+    // 是否要顯示Camera function
+    private boolean isShow = true;
     // 紀錄所點選到的照片
     private TreeMap<Integer, AlbumPhoto> multiPhotos;
     // 張數限制
     private int limitCount;
 
-    public AlbumAdapter(Context context, int limitCount) {
+    public AlbumAdapter(Context context, int limitCount, boolean isShow) {
         this.context = context;
         this.limitCount = limitCount;
+        this.isShow = isShow;
         DisplayUtils.initScreen(context);
         list = new ArrayList<>();
         oriList = new ArrayList<>();
@@ -73,7 +76,8 @@ public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 }
                 break;
             case ITEM_NORMAL:
-                final AlbumPhoto photo = list.get(position - 1);
+                final int less = isShow ? 1 : 0;
+                final AlbumPhoto photo = list.get(position - less);
                 Glide.with(context)
                         .load(photo.getPhotoPath())
                         .crossFade()
@@ -94,7 +98,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                                 // 已選中的照片
                                 ((PhotoNView) holder).rzNClickView.setVisibility(View.GONE);
                                 multiPhotos.remove(photo.getPhotoIndex());
-                                list.get(position - 1).setCheck(false);
+                                list.get(position - less).setCheck(false);
                                 isOver = false;
                             } else {
                                 // 張數限制
@@ -103,7 +107,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                                 } else {
                                     ((PhotoNView) holder).rzNClickView.setVisibility(View.VISIBLE);
                                     multiPhotos.put(photo.getPhotoIndex(), photo);
-                                    list.get(position - 1).setCheck(true);
+                                    list.get(position - less).setCheck(true);
                                 }
                             }
                             listener.onPhotoItemClick(isOver, multiPhotos.size());
@@ -116,19 +120,22 @@ public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return list.size() + 1;
+        return isShow ? list.size() + 1 : list.size();
     }
 
     @Override
     public int getItemViewType(int position) {
-        return position == 0 ? ITEM_CAMERA : ITEM_NORMAL;
+        if (isShow) {
+            return position == 0 ? ITEM_CAMERA : ITEM_NORMAL;
+        }
+        return ITEM_NORMAL;
     }
 
-    public class PhotoCView extends RecyclerView.ViewHolder {
+    private class PhotoCView extends RecyclerView.ViewHolder {
         private RelativeLayout rzAdapterCItem;
         private ImageView rzCImgView;
 
-        public PhotoCView(View itemView) {
+        private PhotoCView(View itemView) {
             super(itemView);
             rzAdapterCItem = (RelativeLayout) itemView.findViewById(R.id.rzAdapterCItem);
             rzCImgView = (ImageView) itemView.findViewById(R.id.rzCImgView);
@@ -136,12 +143,12 @@ public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    public class PhotoNView extends RecyclerView.ViewHolder {
+    private class PhotoNView extends RecyclerView.ViewHolder {
         private RelativeLayout rzAdapterNItem;
         private ImageView rzNImgView;
         private RZCheckView rzNClickView;
 
-        public PhotoNView(View itemView) {
+        private PhotoNView(View itemView) {
             super(itemView);
             rzAdapterNItem = (RelativeLayout) itemView.findViewById(R.id.rzAdapterNItem);
             rzNImgView = (ImageView) itemView.findViewById(R.id.rzNImgView);
@@ -183,7 +190,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         //Log.d("RZ", "Photo mutilPhotos Af:" + mutilPhotos.size());
         list.clear();
         list.addAll(photos);
-        notifyDataSetChanged();
+        notifyItemChanged(photoIndex);
     }
 
     public ArrayList<AlbumPhoto> getPhotos() {
