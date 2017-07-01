@@ -8,12 +8,10 @@ The RZAlbum for android to select the photo library. And usage：<br/>
 * In Activity or Frangment, Can support the use.
 * For __Android7.0 or later, the camera function through the FileProvider do adaptation processing.__<br/>
 
-Screenshots 
-====
-Default screenshots<br/><br/>
+Screenshots <br/><br/>
 ![](https://github.com/ray00178/RayZhangAlbum/blob/master/Screenshot_1.jpg)
 ![](https://github.com/ray00178/RayZhangAlbum/blob/master/Screenshot_2.jpg)<br/>
-<img src="https://github.com/ray00178/RayZhangAlbum/blob/master/Screenshot_3.gif" alt="Demo_gif" title="Demo_gif" width="300" height="500" /><br/>
+<img src="https://github.com/ray00178/RayZhangAlbum/blob/master/Screenshot_3.gif" alt="Demo_gif" title="Demo_gif" width="300" height="500" /><br/><br/>
 Gradle
 ====
 ```java
