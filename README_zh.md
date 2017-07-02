@@ -65,6 +65,7 @@ Usage
     * @param setStatusBarColor : (選擇性) (預設:#0a7e07)
     * @param setToolBarColor : (選擇性)   (預設:#259b24)
     * @param setToolBarTitle : (選擇性)   (預設:RZAlbum)
+    * @param setDialogIcon : (選擇性)
     * @param showCamera : (選擇性)   (預設:true)
     * @param start : (必要)
     */
