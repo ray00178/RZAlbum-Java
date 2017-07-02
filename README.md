@@ -64,6 +64,7 @@ Usage
     * @param setStatusBarColor : (choose) (default:#0a7e07)
     * @param setToolBarColor : (choose)  (default:#259b24)
     * @param setToolBarTitle : (choose)  (default:RZAlbum)
+    * @param setDialogIcon : (choose)
     * @param showCamera : (choose)  (default:true)
     * @param start : (required)
     */
