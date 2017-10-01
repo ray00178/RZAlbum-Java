@@ -13,17 +13,19 @@ import android.view.animation.Interpolator;
 
 /**
  * Created by Ray on 2016/10/2.
- * ScrollHideBehavior
+ * FloatbutBehavior
  */
 
-public class ScrollHideBehavior extends CoordinatorLayout.Behavior<View> {
-    // xml 調用時  所在包名+類別名稱 = com.rayzhang.android.rzalbum.behavior.ScrollHideBehavior
-    private static final String TAG = ScrollHideBehavior.class.getSimpleName();
+public class FloatbutBehavior extends CoordinatorLayout.Behavior<View> {
+    // xml 調用時  所在包名+類別名稱 = com.rayzhang.android.rzalbum.behavior.FloatbutBehavior
+    private static final String TAG = FloatbutBehavior.class.getSimpleName();
     private static final Interpolator INTERPOLATOR = new FastOutLinearInInterpolator();
     // 動畫是否正在進行中
     private boolean isAnimate;
+    // 是否為顯示狀態
+    private boolean isShow = true;
 
-    public ScrollHideBehavior(Context context, AttributeSet attrs) {
+    public FloatbutBehavior(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
@@ -37,15 +39,16 @@ public class ScrollHideBehavior extends CoordinatorLayout.Behavior<View> {
     @Override
     public void onNestedPreScroll(CoordinatorLayout coordinatorLayout, View child, View target, int dx, int dy, int[] consumed) {
         // dy > 0 是向上滑動 ; dy < 0 是向下滑動
-        if (dy >= 10 && !isAnimate && child.getVisibility() == View.VISIBLE) {
-            hide(child);
-        } else if (dy < -10 && !isAnimate && child.getVisibility() == View.INVISIBLE) {
-            show(child);
+        CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) child.getLayoutParams();
+        if (dy >= 10 && !isAnimate && isShow) {
+            hide(child, lp.bottomMargin);
+        } else if (dy < -10 && !isAnimate && !isShow) {
+            show(child, lp.bottomMargin);
         }
     }
 
-    private void hide(final View view) {
-        ObjectAnimator translationY = ObjectAnimator.ofFloat(view, "translationY", 0f, view.getHeight());
+    private void hide(final View view, int bottomMargin) {
+        ObjectAnimator translationY = ObjectAnimator.ofFloat(view, "translationY", 0f, view.getHeight() / 2.5f + bottomMargin);
         AnimatorSet set = new AnimatorSet();
         set.play(translationY);
         set.setDuration(200);
@@ -58,8 +61,8 @@ public class ScrollHideBehavior extends CoordinatorLayout.Behavior<View> {
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                view.setVisibility(View.INVISIBLE);
                 isAnimate = false;
+                isShow = false;
             }
 
             @Override
@@ -74,8 +77,8 @@ public class ScrollHideBehavior extends CoordinatorLayout.Behavior<View> {
         set.start();
     }
 
-    private void show(final View view) {
-        ObjectAnimator translationY = ObjectAnimator.ofFloat(view, "translationY", view.getHeight(), 0f);
+    private void show(final View view, int bottomMargin) {
+        ObjectAnimator translationY = ObjectAnimator.ofFloat(view, "translationY", view.getHeight() / 2.5f + bottomMargin, 0f);
         AnimatorSet set = new AnimatorSet();
         set.play(translationY);
         set.setDuration(200);
@@ -83,13 +86,13 @@ public class ScrollHideBehavior extends CoordinatorLayout.Behavior<View> {
         set.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
-                view.setVisibility(View.VISIBLE);
                 isAnimate = true;
             }
 
             @Override
             public void onAnimationEnd(Animator animation) {
                 isAnimate = false;
+                isShow = true;
             }
 
             @Override

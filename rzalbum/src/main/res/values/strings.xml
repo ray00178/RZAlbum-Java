@@ -12,4 +12,5 @@
     <string name="rz_album_dia_camera_message_denied">請至手機設定 → 應用程式 → %1$s → 權限，將【相機】開啟</string>
     <string name="rz_album_dia_know">知道了</string>
     <string name="rz_scrollhide_behavior" translatable="false">com.rayzhang.android.rzalbum.behavior.ScrollHideBehavior</string>
+    <string name="rz_floatbut_behavior" translatable="false">com.rayzhang.android.rzalbum.behavior.FloatbutBehavior</string>
 </resources>

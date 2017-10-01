@@ -34,11 +34,13 @@ public class MainActivity extends AppCompatActivity {
             case 1:
                 RZAlbum.ofAppName("RZAlbum")
                         .setLimitCount(2)
-                        .setSpanCount(3)
+                        //.setSpanCount(3)
                         .setStatusBarColor(Color.parseColor("#AD1457"))
                         .setToolBarColor(Color.parseColor("#D81B60"))
                         .setToolBarTitle("Album")
-                        .setDialogIcon(R.drawable.ic_bird_shape_30_3dp)
+                        .setPickColor(Color.argb(255, 153, 51, 255))
+                        //.setDialogIcon(R.drawable.ic_bird_shape_30_3dp)
+                        //.setPreviewOrientation(RZAlbum.ORIENTATION_AUTO)
                         .showCamera(true)
                         .start(this, REQUEST_RZALBUM);
                 return true;

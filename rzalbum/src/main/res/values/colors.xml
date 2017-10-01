@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="rz_colorPrimary">#259b24</color>
-    <color name="rz_colorPrimaryDark">#0a7e07</color>
-    <color name="rz_colorAccent">#ff5177</color>
+    <color name="rz_colorPrimary">#ff512da8</color>
+    <color name="rz_colorPrimaryDark">#ff673ab7</color>
+    <color name="rz_colorAccent">#ffffc107</color>
 
-    <color name="rz_colorBlack">#000000</color>
-    <color name="rz_colorOrange">#ff6600</color>
+    <color name="rz_colorOfBlack">#ff4d4d4d</color>
+    <color name="rz_colorOfTransWhite">#d3ffffff</color>
 </resources>

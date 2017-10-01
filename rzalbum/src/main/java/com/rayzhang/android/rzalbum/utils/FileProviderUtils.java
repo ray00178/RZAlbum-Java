@@ -12,9 +12,10 @@ import java.util.List;
 
 /**
  * Created by Ray on 2017/6/11.
+ * FileProviderUtils
  */
 
-public class FileProviderUtils {
+public final class FileProviderUtils {
     // Android7.0
     public static Uri getUriForFile(Context context, File file) {
         Uri fileUri = null;

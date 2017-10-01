@@ -2,7 +2,7 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_album1"
+    android:id="@+id/mCoorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.rayzhang.android.rzalbum.RZAlbumActivity">
@@ -24,51 +24,42 @@
         android:layout_height="wrap_content"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    <!-- 底部控制列 -->
-    <RelativeLayout
-        android:id="@+id/mBottomBar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:layout_gravity="bottom"
-        android:paddingLeft="10dp"
-        android:paddingRight="20dp"
-        app:layout_behavior="@string/rz_scrollhide_behavior">
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/mFabFloderBut"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="@dimen/rz_fab_margin_bottom"
+        android:elevation="6dp"
+        android:src="@drawable/rz_fab_floder_25_3dp"
+        android:translationZ="12dp"
+        android:visibility="invisible"
+        app:backgroundTint="@android:color/white"
+        app:borderWidth="0dp" />
 
-        <com.rayzhang.android.rzalbum.widget.RZIconTextView
-            android:id="@+id/mTextFolder"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:gravity="center_vertical"
-            android:maxLines="2"
-            android:textColor="@android:color/white"
-            android:textSize="14sp"
-            app:rightDrawable="@drawable/ic_down_35dp"
-            app:rightDrawableHeight="15dp"
-            app:rightDrawableWidth="15dp" />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/mFabDoneBut"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="@dimen/rz_fab_margin_bottom"
+        android:elevation="6dp"
+        android:src="@drawable/rz_fab_done_25_3dp"
+        android:translationZ="12dp"
+        android:visibility="invisible"
+        app:backgroundTint="@android:color/white"
+        app:borderWidth="0dp" />
 
-        <com.rayzhang.android.rzalbum.widget.RZIconTextView
-            android:id="@+id/mTextPrev"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="15dp"
-            android:layout_toLeftOf="@+id/mImgDone"
-            android:gravity="center_vertical"
-            android:text="(0)"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            app:leftDrawable="@drawable/ic_prev_35dp"
-            app:leftDrawableHeight="25dp"
-            app:leftDrawableWidth="25dp" />
-
-        <ImageView
-            android:id="@+id/mImgDone"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/ic_done_35dp" />
-    </RelativeLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/mFabMultiBut"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="@dimen/rz_fab_margin_bottom"
+        android:elevation="6dp"
+        android:src="@drawable/rz_fab_multi_function_25_3dp"
+        android:translationZ="12dp"
+        app:backgroundTint="@android:color/white"
+        app:borderWidth="0dp"
+        app:layout_behavior="@string/rz_floatbut_behavior" />
 </android.support.design.widget.CoordinatorLayout>

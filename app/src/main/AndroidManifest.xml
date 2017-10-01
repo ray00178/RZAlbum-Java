@@ -23,15 +23,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- 使用RZAlbum -->
         <activity
             android:name="com.rayzhang.android.rzalbum.RZAlbumActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/AppNoActionBar"
-            android:windowSoftInputMode="stateAlwaysHidden|stateHidden">
-        </activity>
+            android:windowSoftInputMode="stateAlwaysHidden|stateHidden"/>
     </application>
 
 </manifest>

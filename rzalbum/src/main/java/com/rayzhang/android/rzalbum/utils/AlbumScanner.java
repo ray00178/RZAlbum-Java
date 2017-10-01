@@ -4,8 +4,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.provider.MediaStore;
 
-import com.rayzhang.android.rzalbum.module.bean.AlbumFolder;
-import com.rayzhang.android.rzalbum.module.bean.AlbumPhoto;
+import com.rayzhang.android.rzalbum.model.AlbumFolder;
+import com.rayzhang.android.rzalbum.model.AlbumPhoto;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,20 +15,23 @@ import java.util.Map;
 
 /**
  * Created by Ray on 2016/12/26.
+ * AlbumScanner
  */
 
-public class AlbumScanner {
+public final class AlbumScanner {
     private static final String TAG = AlbumScanner.class.getSimpleName();
     private static AlbumScanner scanner;
+    private int pickColor;
 
-    private AlbumScanner() {
+    private AlbumScanner(int pickColor) {
+        this.pickColor = pickColor;
     }
 
-    public static AlbumScanner instances() {
+    public static AlbumScanner instances(int pickColor) {
         if (scanner == null) {
             synchronized (AlbumScanner.class) {
                 if (scanner == null) {
-                    scanner = new AlbumScanner();
+                    scanner = new AlbumScanner(pickColor);
                 }
             }
         }
@@ -66,6 +69,7 @@ public class AlbumScanner {
     };
 
     public List<AlbumFolder> getPhotoAlbum(Context context) {
+        // INTERNAL_CONTENT_URI ; EXTERNAL_CONTENT_URI
         Cursor mCursor = MediaStore.Images.Media.query(context.getContentResolver(),
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI, STORE_IMAGES);
 
@@ -94,8 +98,7 @@ public class AlbumScanner {
             long addTime = mCursor.getLong(3);
             int bucketID = mCursor.getInt(4);
             String bucketName = mCursor.getString(5);
-//            Log.d(TAG, String.format("ID:%d path:%s name:%s addTime:%d bucketID:%d bucketName:%s",
-//                    imgID, imaPath, imaName, addTime, bucketID, bucketName));
+
             /**
              * 建立每張照片資訊
              */
@@ -105,10 +108,13 @@ public class AlbumScanner {
             photo.setPhotoName(imaName);
             photo.setPhotoAddTime(addTime);
             photo.setPhotoIndex(photoIndex);
+            photo.setPickNumber(0);
+            photo.setPickColor(pickColor);
             /**
              * 加入到所有照片的資料夾
              */
             allImageAlbumFolder.addPhoto(photo);
+            allImageAlbumFolder.setPickColor(pickColor);
 
             /**
              * 取得手機中各別相簿資料夾
@@ -121,10 +127,10 @@ public class AlbumScanner {
                 albumFolder.setFolderID(bucketID);
                 albumFolder.setFolderName(bucketName);
                 albumFolder.addPhoto(photo);
-
+                albumFolder.setPickColor(pickColor);
                 albumFolderMap.put(bucketName, albumFolder);
             }
-            photoIndex++;
+            photoIndex += 1;
         }
         mCursor.close();
         List<AlbumFolder> list = new ArrayList<>();

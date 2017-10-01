@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.rayzhang.android.rzalbum">
 
     <application
@@ -10,11 +11,17 @@
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
             android:exported="false"
-            android:grantUriPermissions="true">
+            android:grantUriPermissions="true"
+            tools:replace="android:authorities">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/rz_file_paths">
-            </meta-data>
+                android:resource="@xml/rz_file_paths"
+                tools:replace="android:resource"/>
         </provider>
+
+        <activity
+            android:name=".view.PreviewPhotoActivty"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@style/RZAppNoActionBarTheme" />
     </application>
 </manifest>

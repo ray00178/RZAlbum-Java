@@ -22,13 +22,16 @@ allprojects {
     }
     // jCenter; 加上這些為了防止編碼失敗
     tasks.withType(Javadoc) {
-        options{
+        options {
             encoding "UTF-8"
             charSet 'UTF-8'
-            links "http://docs.oracle.com/javase/7/docs/api"
+            links "http://docs.oracle.com/javase/8/docs/api"
         }
     }
 }
+// mac use(可能是編碼失敗)
+// http://www.itread01.com/articles/1478210122.html
+tasks.findByPath(":rzalbum:javadoc").enabled = false
 
 task clean(type: Delete) {
     delete rootProject.buildDir

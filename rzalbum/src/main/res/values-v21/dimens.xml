@@ -1,0 +1,6 @@
+<resources>
+    <!-- 參考資料 : http://blog.csdn.net/lmj623565791/article/details/46678867-->
+    <dimen name="rz_fab_margin">16dp</dimen>
+    <!-- 72dp -->
+    <dimen name="rz_fab_margin_bottom">16dp</dimen>
+</resources>

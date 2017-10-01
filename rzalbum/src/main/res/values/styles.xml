@@ -1,20 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="RZAppTheme" parent="Theme.AppCompat.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/rz_colorPrimary</item>
         <item name="colorPrimaryDark">@color/rz_colorPrimaryDark</item>
         <item name="colorAccent">@color/rz_colorAccent</item>
     </style>
-
-    <style name="RZ_AlbumPrevDialogStyle" parent="Theme.AppCompat.Dialog">
-        <item name="android:windowFrame">@null</item>
-        <item name="android:windowIsFloating">true</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:backgroundDimEnabled">false</item>
-        <item name="android:windowBackground">@color/rz_colorBlack</item>
-        <item name="colorControlNormal">@android:color/white</item>
-        <item name="colorAccent">@color/rz_colorOrange</item>
+    <!-- AppNoActionBarTheme-->
+    <style name="RZAppNoActionBarTheme" parent="RZAppTheme">
+        <item name="windowNoTitle">true</item>
     </style>
 </resources>

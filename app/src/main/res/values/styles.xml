@@ -12,8 +12,4 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
-
-    <style name="Dialog" parent="RZ_AlbumPrevDialogStyle">
-        <item name="colorAccent">@color/colorAccent</item>
-    </style>
 </resources>

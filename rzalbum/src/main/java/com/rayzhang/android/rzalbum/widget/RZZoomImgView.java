@@ -1,26 +1,31 @@
 package com.rayzhang.android.rzalbum.widget;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 
 /**
  * Created by Ray on 2016/10/15.
+ * 自訂義可以縮放的Imgview
  */
 
-// 自訂義可以縮放的Imgview
 public class RZZoomImgView extends android.support.v7.widget.AppCompatImageView implements ViewTreeObserver.OnGlobalLayoutListener,
         ScaleGestureDetector.OnScaleGestureListener, View.OnTouchListener {
 
     private boolean mFirst;     // 第一次加載 才初始化
+    private Context context;
+    private int density, statusBarHeight;
     /**
      * 整個縮放區間在 mInitScale ~ mMaxScale
      */
@@ -62,8 +67,6 @@ public class RZZoomImgView extends android.support.v7.widget.AppCompatImageView 
     private float mMinScale;        // 縮小的最小的值
     private float mMaxOverScale;    // 超出最大的最大值
 
-    private Context context;
-
     public RZZoomImgView(Context context) {
         this(context, null);
     }
@@ -74,6 +77,16 @@ public class RZZoomImgView extends android.support.v7.widget.AppCompatImageView 
 
     public RZZoomImgView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+
+        DisplayMetrics metrics = new DisplayMetrics();
+        WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        manager.getDefaultDisplay().getMetrics(metrics);
+        density = (int) metrics.density;
+        statusBarHeight = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            statusBarHeight = getResources().getDimensionPixelSize(resourceId);
+        }
 
         mScaleMatrix = new Matrix();
         // 透過 matrix 來進行縮放
@@ -118,25 +131,23 @@ public class RZZoomImgView extends android.support.v7.widget.AppCompatImageView 
         });
     }
 
-    // 當視圖加載至窗口時
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        // resgiter listner
+        // 當視圖加載至窗口時，註冊監聽
         getViewTreeObserver().addOnGlobalLayoutListener(this);
     }
 
-    // 當視圖離開窗口時
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        // unresgiter listner
+        // 當視圖離開窗口時，取消監聽
         getViewTreeObserver().removeOnGlobalLayoutListener(this);
     }
 
-    // 當視圖加載完成時 可以取得控件的寬高
     @Override
     public void onGlobalLayout() {
+        // 當視圖加載完成時 可以取得控件的寬高
         if (!mFirst) {
             // 取得控件的寬高
             int width = getWidth();
@@ -144,9 +155,7 @@ public class RZZoomImgView extends android.support.v7.widget.AppCompatImageView 
             // 取得當前 image的 寬高
             Drawable d = getDrawable();
             // 如果沒有圖片返回
-            if (d == null) {
-                return;
-            }
+            if (d == null) return;
 
             int dw = d.getIntrinsicWidth();
             int dh = d.getIntrinsicHeight();
@@ -156,32 +165,38 @@ public class RZZoomImgView extends android.support.v7.widget.AppCompatImageView 
             // 定義一個縮放比例的變數
             float scale = 1.0f;
 
-            /**
+            /*
              * 如果image的寬度 > 控件的寬度 但卻 < 控件的高度 就依寬度比例縮放
              */
             if (dw > width && dh < height) {
                 scale = width * 1.0f / dw;
             }
-            /**
+            /*
              * 如果image的高度 > 控件的高度 但卻 < 控件的寬度 就依高度比例縮放
              */
             if (dw < width && dh > height) {
                 scale = height * 1.0f / dh;
             }
-            /**
+            /*
              * 如果image的高度 > 控件的高度 但卻 = 控件的寬度 就依高度比例縮放
              */
             if (dw == width && dh > height) {
                 scale = height * 1.0f / dh;
             }
-            /**
+            /*
+             * 如果image的寬度 > 控件的寬度 但卻 = 控件的高度 就依寬度比例縮放
+             */
+            if (dw > width && dh == height) {
+                scale = width * 1.0f / dw;
+            }
+            /*
              * 如果image的寬高 > 或 < 控件的寬高  就依比例最小的來縮放
              */
             if ((dw > width && dh > height) || (dw < width && dh < height)) {
                 scale = Math.min(width * 1.0f / dw, height * 1.0f / dh);
             }
 
-            /**
+            /*
              * 得到初始化的各縮放比例
              */
             mInitScale = scale;
@@ -198,8 +213,8 @@ public class RZZoomImgView extends android.support.v7.widget.AppCompatImageView 
             mScaleMatrix.postTranslate(dx, dy);
             // 進行縮放 後面2個參數代表 以哪個中心點為縮放(這邊以控件的中心點)
             mScaleMatrix.postScale(mInitScale, mInitScale, width / 2, height / 2);
-
             setImageMatrix(mScaleMatrix);
+
             mFirst = true;
             // 防止加載未完成時滑動螢幕而導致圖片錯亂 故在此作初始化
             mScaleGestureDetector = new ScaleGestureDetector(context, this);
@@ -281,8 +296,8 @@ public class RZZoomImgView extends android.support.v7.widget.AppCompatImageView 
             return true;
         }
 
-        // 縮放比例判斷
-        /**
+        /*
+         * 縮放比例判斷
          * 如果scaleFactor大於1，說明想放大，當前的縮放比例乘以scaleFactor之後小於 最大的縮放比例時，允許放大
          * 如果scaleFactor小於1，說明想縮小，當前的縮放比例乘以scaleFactor之後大於 最小的縮放比例時，允許縮小
          */
@@ -317,7 +332,7 @@ public class RZZoomImgView extends android.support.v7.widget.AppCompatImageView 
         return true;
     }
 
-    // 取得image縮放後的 4點座標 & 寬高
+    // 取得image縮放後的4點座標 & 寬高
     private RectF getMatrixRectF() {
         Matrix matrix = mScaleMatrix;
         RectF rectF = new RectF();
@@ -418,7 +433,7 @@ public class RZZoomImgView extends android.support.v7.widget.AppCompatImageView 
     }
 
     @Override
-    public void onScaleEnd(ScaleGestureDetector detector) { // 縮放結束的時候
+    public void onScaleEnd(ScaleGestureDetector detector) {
 
     }
 
@@ -468,9 +483,9 @@ public class RZZoomImgView extends android.support.v7.widget.AppCompatImageView 
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (rectF.width() > getWidth() + div || rectF.height() > getHeight() + div) {
-//                    if (getParent() instanceof ViewPager) {
-//                        getParent().requestDisallowInterceptTouchEvent(true);
-//                    }
+                    //if (getParent() instanceof ViewPager) {
+                    //getParent().requestDisallowInterceptTouchEvent(true);
+                    //}
                     getParent().requestDisallowInterceptTouchEvent(true);
                 }
 
@@ -529,12 +544,57 @@ public class RZZoomImgView extends android.support.v7.widget.AppCompatImageView 
         return true;
     }
 
+    @Override
+    protected void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        Drawable d = getDrawable();
+        if (d == null) return;
+        // newConfig.screenHeightDp : Subtract statusBar height
+        int width = newConfig.screenWidthDp * density;
+        int height = newConfig.screenHeightDp * density + statusBarHeight;
+        int dw = d.getIntrinsicWidth();
+        int dh = d.getIntrinsicHeight();
+
+        float scale = 1.0f;
+        if (dw > width && dh < height) {
+            scale = width * 1.0f / dw;
+        }
+        if (dw < width && dh > height) {
+            scale = height * 1.0f / dh;
+        }
+        if (dw == width && dh > height) {
+            scale = height * 1.0f / dh;
+        }
+        if (dw > width && dh == height) {
+            scale = width * 1.0f / dw;
+        }
+        if ((dw > width && dh > height) || (dw < width && dh < height)) {
+            scale = Math.min(width * 1.0f / dw, height * 1.0f / dh);
+        }
+
+        mInitScale = scale;
+        mMaxScale = mInitScale * 4;
+        mMidScale = mInitScale * 2;
+        mMinScale = mInitScale / 4;
+        mMaxOverScale = mInitScale * 6.5f;
+        // reset
+        mScaleMatrix.reset();
+        int dx = (width - dw) / 2;
+        int dy = (height - dh) / 2;
+        // 進行平移
+        mScaleMatrix.postTranslate(dx, dy);
+        // 進行縮放
+        mScaleMatrix.postScale(mInitScale, mInitScale, width / 2, height / 2);
+        setImageMatrix(mScaleMatrix);
+    }
+
     /**
      * 判斷是否移動中
      *
-     * @param dx
-     * @param dy
-     * @return
+     * @param dx dx
+     * @param dy dy
+     * @return isMoveAction
      */
     private boolean isMoveAction(float dx, float dy) {
         return Math.sqrt(dx * dx + dy * dy) > mTouchSlop;
