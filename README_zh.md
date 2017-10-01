@@ -1,21 +1,22 @@
-RZAlbum ![](http://arminray.ga/image/rzalbum_planform.svg) ![](http://arminray.ga/image/rzalbum_version.svg) ![](http://arminray.ga/image/rzalbum_license.svg)
-====
-RZAlbum用於Android使用的照片選擇庫，相關功能如下：<br/>
+<p align="center">
+  <img src="https://github.com/ray00178/RayZhangAlbum/blob/master/RZAlbum_Logo.png" alt="RZAlbum" width="450" height="450" />
+</p>
+
+
+RZAlbum為Android而生的照片選擇庫，相關功能如下：<br/>
 * 可支持單選、複選、預覽、照片文件夾切換及內建拍照  
 * 對於__ 6.0以上版本 __，已將權限做很好的處理，故無需擔心要自行處理
-* 依照你的專案配色，可自訂StatusBarColor、ToolBarColor
+* 依照你的專案配色，可自訂StatusBarColor、ToolBarColor、PickColor
 * 可依照你的喜好/需求，顯示欄位數量及選取張數限制
 * 無論是在Activity、Frangment，都可支持使用
 * 對於__ Android7.0以上，拍照功能透過FileProvider做適配處理 __<br/>
 
 Screenshots <br/><br/>
-![](https://github.com/ray00178/RayZhangAlbum/blob/master/Screenshot_1.jpg)
-![](https://github.com/ray00178/RayZhangAlbum/blob/master/Screenshot_2.jpg)<br/>
-<img src="https://github.com/ray00178/RayZhangAlbum/blob/master/Screenshot_3.gif" alt="Demo_gif" title="Demo_gif" width="300" height="500" /><br/><br/>
+![](https://github.com/ray00178/RayZhangAlbum/blob/master/screenshots.jpg)
 Gradle
 ====
 ```java
-compile 'com.rayzhang.android:rzalbum:1.1.1'
+compile 'com.rayzhang.android:rzalbum:1.6.0'
 ```
 Maven
 ====
@@ -23,7 +24,7 @@ Maven
 <dependency>
   <groupId>com.rayzhang.android</groupId>
   <artifactId>rzalbum</artifactId>
-  <version>1.1.1</version>
+  <version>1.6.0</version>
   <type>pom</type>
 </dependency>
 ```
@@ -59,15 +60,17 @@ Usage
   3.調用RZAlbum，有多種使用方法
   ```java
   /**
-    * @param ofAppName : (必要)
-    * @param setLimitCount : (選擇性) (預設:5)
-    * @param setSpanCount : (選擇性)  (預設:3)
-    * @param setStatusBarColor : (選擇性) (預設:#0a7e07)
-    * @param setToolBarColor : (選擇性)   (預設:#259b24)
-    * @param setToolBarTitle : (選擇性)   (預設:RZAlbum)
-    * @param setDialogIcon : (選擇性)
-    * @param showCamera : (選擇性)   (預設:true)
-    * @param start : (必要)
+    * @param ofAppName             : (必要)
+    * @param setLimitCount         : (選擇性) (預設:5)
+    * @param setSpanCount          : (選擇性) (預設:3)
+    * @param setStatusBarColor     : (選擇性) (預設:#ff512da8)
+    * @param setToolBarColor       : (選擇性) (預設:#ff673ab7)
+    * @param setToolBarTitle       : (選擇性) (預設:RZAlbum)
+    * @param setPickColor          : (選擇性) (預設:#ffffc107)
+    * @param setPreviewOrientation : (選擇性) (預設:ORIENTATION_AUTO)
+    * @param setDialogIcon         : (選擇性)
+    * @param showCamera            : (選擇性) (預設:true)
+    * @param start                 : (必要)
     */
     RZAlbum.ofAppName("RZAlbum")
             .start(this, REQUEST_RZALBUM);
@@ -80,7 +83,9 @@ Usage
             .setStatusBarColor(Color.parseColor("#AD1457"))
             .setToolBarColor(Color.parseColor("#D81B60"))
             .setToolBarTitle("Album")
+            .setPickColor(Color.argb(255, 153, 51, 255))
             .setDialogIcon(R.drawable.ic_bird_shape_30_3dp)
+            .setPreviewOrientation(RZAlbum.ORIENTATION_PORTRATI)
             .showCamera(false)
             .start(this, REQUEST_RZALBUM);
 ```
