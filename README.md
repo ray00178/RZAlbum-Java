@@ -2,7 +2,6 @@
   <img src="https://github.com/ray00178/RayZhangAlbum/blob/master/RZAlbum_Logo.png" alt="RZAlbum" width="450" height="450" />
 </p>
 
-====
 The RZAlbum for android to select the photo library. And usage：<br/>
 * Support Single choice、Multiple choice、Preview、Folder switch and take pictures.  
 * For __6.0 or later__, The permissions have been handled very well，So don't worry about their own.
