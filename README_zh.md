@@ -1,4 +1,4 @@
-RZAlbum ![](http://arminray.ga/image/rzalbum_planform.svg) ![](http://arminray.ga/image/rzalbum_download.svg) ![](http://arminray.ga/image/rzalbum_license.svg)
+RZAlbum ![](http://arminray.ga/image/rzalbum_planform.svg) ![](http://arminray.ga/image/rzalbum_version.svg) ![](http://arminray.ga/image/rzalbum_license.svg)
 ====
 RZAlbum用於Android使用的照片選擇庫，相關功能如下：<br/>
 * 可支持單選、複選、預覽、照片文件夾切換及內建拍照  
@@ -8,15 +8,14 @@ RZAlbum用於Android使用的照片選擇庫，相關功能如下：<br/>
 * 無論是在Activity、Frangment，都可支持使用
 * 對於__ Android7.0以上，拍照功能透過FileProvider做適配處理 __<br/>
 
-Screenshots 
-====
-<img src="https://github.com/ray00178/RayZhangAlbum/blob/master/Screenshot_1.jpg" alt="Demo_1" title="Demo_1" width="300" height="500" /><br/>
-<img src="https://github.com/ray00178/RayZhangAlbum/blob/master/Screenshot_2.jpg" alt="Demo_2" title="Demo_2" width="300" height="500" /><br/>
-<img src="https://github.com/ray00178/RayZhangAlbum/blob/master/Screenshot_3.gif" alt="Demo_gif" title="Demo_gif" width="300" height="500" /><br/>
+Screenshots <br/><br/>
+![](https://github.com/ray00178/RayZhangAlbum/blob/master/Screenshot_1.jpg)
+![](https://github.com/ray00178/RayZhangAlbum/blob/master/Screenshot_2.jpg)<br/>
+<img src="https://github.com/ray00178/RayZhangAlbum/blob/master/Screenshot_3.gif" alt="Demo_gif" title="Demo_gif" width="300" height="500" /><br/><br/>
 Gradle
 ====
 ```java
-compile 'com.rayzhang.android:rzalbum:1.1.0'
+compile 'com.rayzhang.android:rzalbum:1.1.1'
 ```
 Maven
 ====
@@ -24,7 +23,7 @@ Maven
 <dependency>
   <groupId>com.rayzhang.android</groupId>
   <artifactId>rzalbum</artifactId>
-  <version>1.1.0</version>
+  <version>1.1.1</version>
   <type>pom</type>
 </dependency>
 ```
@@ -32,12 +31,23 @@ Usage
 ====
   1.在Androidmanifest.xml加入以下程式碼
   ```xml
+  <!-- android:theme = 根據你的風格設定
+  <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+      <item name="colorPrimary">@color/colorPrimary</item>
+      <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+      <item name="colorAccent">@color/colorAccent</item>
+  </style>
+
+  <style name="AppNoActionBar" parent="AppTheme">
+      <item name="windowActionBar">false</item>
+      <item name="windowNoTitle">true</item>
+  </style> -->
   <activity
-      android:name="com.rayzhang.android.rzalbum.RZAlbumActivity"
+     android:name="com.rayzhang.android.rzalbum.RZAlbumActivity"
       android:configChanges="orientation|keyboardHidden|screenSize"
-      android:screenOrientation="portrait"
-      android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
-      android:windowSoftInputMode="stateAlwaysHidden|stateHidden" />
+     android:screenOrientation="portrait"
+      android:theme="@style/AppNoActionBar"
+      android:windowSoftInputMode="stateAlwaysHidden|stateHidden"/>
   ```
   2.在Androidmanifest.xml加入以下權限
   ```xml
@@ -49,13 +59,15 @@ Usage
   3.調用RZAlbum，有多種使用方法
   ```java
   /**
-   * @param ofAppName : (必要)
-   * @param setLimitCount : (選擇性)
-   * @param setSpanCount : (選擇性)
-    * @param setStatusBarColor : (選擇性)
-    * @param setToolBarColor : (選擇性)
-    * @param setToolBarTitle : (選擇性)
-    * @param start : (必要)
+    * @param ofAppName : (必要)
+    * @param setLimitCount : (選擇性) (預設:5)
+    * @param setSpanCount : (選擇性)  (預設:3)
+    * @param setStatusBarColor : (選擇性) (預設:#0a7e07)
+    * @param setToolBarColor : (選擇性)   (預設:#259b24)
+    * @param setToolBarTitle : (選擇性)   (預設:RZAlbum)
+    * @param setDialogIcon : (選擇性)
+    * @param showCamera : (選擇性)   (預設:true)
+    * @param start : (必要)
     */
     RZAlbum.ofAppName("RZAlbum")
             .start(this, REQUEST_RZALBUM);
@@ -69,6 +81,7 @@ Usage
             .setToolBarColor(Color.parseColor("#D81B60"))
             .setToolBarTitle("Album")
             .setDialogIcon(R.drawable.ic_bird_shape_30_3dp)
+            .showCamera(false)
             .start(this, REQUEST_RZALBUM);
 ```
 4.Override Activity/Fragment的onActivityResult方法
@@ -106,18 +119,26 @@ Notice
 License
 ====
   ```
-Copyright 2017 RayZhang
+MIT License
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Copyright (c) [2016] [RZAlbum]
 
-   http://www.apache.org/licenses/LICENSE-2.0
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
   ```
 
