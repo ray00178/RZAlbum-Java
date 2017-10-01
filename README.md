@@ -9,13 +9,11 @@ The RZAlbum for android to select the photo library. And usage：<br/>
 * For __Android7.0 or later, the camera function through the FileProvider do adaptation processing.__<br/>
 
 Screenshots <br/><br/>
-![](https://github.com/ray00178/RayZhangAlbum/blob/master/Screenshot_1.jpg)
-![](https://github.com/ray00178/RayZhangAlbum/blob/master/Screenshot_2.jpg)<br/>
-<img src="https://github.com/ray00178/RayZhangAlbum/blob/master/Screenshot_3.gif" alt="Demo_gif" title="Demo_gif" width="300" height="500" /><br/><br/>
+![](https://github.com/ray00178/RayZhangAlbum/blob/master/screenshots.jpg)
 Gradle
 ====
 ```java
-compile 'com.rayzhang.android:rzalbum:1.1.1'
+compile 'com.rayzhang.android:rzalbum:1.6.0'
 ```
 Maven
 ====
@@ -23,7 +21,7 @@ Maven
 <dependency>
   <groupId>com.rayzhang.android</groupId>
   <artifactId>rzalbum</artifactId>
-  <version>1.1.1</version>
+  <version>1.6.0</version>
   <type>pom</type>
 </dependency>
 ```
@@ -58,15 +56,17 @@ Usage
   3.Use RZAlbum. There are many ways to call.
   ```java
   /**
-    * @param ofAppName : (required)
-    * @param setLimitCount : (choose) (default:5)     
-    * @param setSpanCount : (choose) (default:3) 
-    * @param setStatusBarColor : (choose) (default:#0a7e07)
-    * @param setToolBarColor : (choose)  (default:#259b24)
-    * @param setToolBarTitle : (choose)  (default:RZAlbum)
-    * @param setDialogIcon : (choose)
-    * @param showCamera : (choose)  (default:true)
-    * @param start : (required)
+    * @param ofAppName             : (required)
+    * @param setLimitCount         : (choose)   (default:5)     
+    * @param setSpanCount          : (choose)   (default:3) 
+    * @param setStatusBarColor     : (choose)   (default:#ff512da8)
+    * @param setToolBarColor       : (choose)   (default:#ff673ab7)
+    * @param setToolBarTitle       : (choose)   (default:RZAlbum)
+    * @param setPickColor          : (choose)   (default:#ffffc107)
+    * @param setPreviewOrientation : (choose)   (default:ORIENTATION_AUTO)
+    * @param setDialogIcon         : (choose)
+    * @param showCamera            : (choose)   (default:true)
+    * @param start                 : (required)
     */
     RZAlbum.ofAppName("RZAlbum")
             .start(this, REQUEST_RZALBUM);
@@ -79,7 +79,9 @@ Usage
             .setStatusBarColor(Color.parseColor("#AD1457"))
             .setToolBarColor(Color.parseColor("#D81B60"))
             .setToolBarTitle("Album")
+            .setPickColor(Color.argb(255, 153, 51, 255))
             .setDialogIcon(R.drawable.ic_bird_shape_30_3dp)
+            .setPreviewOrientation(RZAlbum.ORIENTATION_PORTRATI)
             .showCamera(false)
             .start(this, REQUEST_RZALBUM);
   ```
