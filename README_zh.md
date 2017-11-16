@@ -2,6 +2,7 @@
   <img src="https://github.com/ray00178/RayZhangAlbum/blob/master/RZAlbum_Logo.png" alt="RZAlbum" width="450" height="450" />
 </p>
 
+![](https://floating-brook-62420.herokuapp.com/images/rzalbum_platform.svg) ![](https://floating-brook-62420.herokuapp.com/images/rzalbum_version.svg) ![](https://floating-brook-62420.herokuapp.com/images/rzalbum_license.svg)
 
 RZAlbum為Android而生的照片選擇庫，相關功能如下：<br/>
 * 可支持單選、複選、預覽、照片文件夾切換及內建拍照  
