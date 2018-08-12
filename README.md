@@ -86,6 +86,23 @@ Usage
             }
         }
     }
+    
+    --- You can get many photo information from AlbumPhoto class. like this: ---
+        bucketName        --> Download
+        photoId           --> 65
+        photoDesc         --> null
+        photoLat          --> 0.0
+        photoLng          --> 0.0
+        photoOrientation  --> 0
+        photoDateAdded    --> 1530342373
+        photoDateModified --> 1509015603
+        photoName         --> mobile01_20171026_6.jpg
+        photoWidth        --> 720
+        photoHeight       --> 480
+        photoSize         --> 236972
+        photoMimeType     --> image/jpeg
+        photoIsPrivate    --> false
+        photoPath         --> /storage/emulated/0/Download/mobile01_20171026_6.jpg
   ```
   4.If you want to customize the Dialog title, description, and button name, please overwrite the following names in strings.xml.
   ```xml
@@ -109,7 +126,8 @@ Notice
 Update Log
 ====
 - **2018-08-12 Version 1.7.0**
-     - add setAllFolderName() & showGif() function。
+     - add setAllFolderName() & showGif() function
+     - add AlbumPhoto class
      - optimize performance
      - update【android support library -> 27.1.1】&【Glide -> 4.7.1】
      
