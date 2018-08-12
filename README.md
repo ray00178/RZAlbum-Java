@@ -73,7 +73,7 @@ Usage
             .showGif(false)
             .start(this, REQUEST_RZALBUM);
   ```
-  4.Override Activity's/Fragment's onActivityResult method.
+  3.Override Activity's/Fragment's onActivityResult method.
   ```java
   @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -87,7 +87,7 @@ Usage
         }
     }
   ```
-  5.If you want to customize the Dialog title, description, and button name, please overwrite the following names in strings.xml.
+  4.If you want to customize the Dialog title, description, and button name, please overwrite the following names in strings.xml.
   ```xml
   <string name="rz_album_dia_read_description">(Enter something that u want)</string>
   <string name="rz_album_dia_read_message">(Enter something that u want)</string>
@@ -106,6 +106,13 @@ Notice
   compile 'com.github.bumptech.glide:glide:4.7.1'
   annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
   ```
+Update Log
+====
+- **2018-08-12 Version 1.7.0**
+     - add setAllFolderName() & showGif() function。
+     - optimize performance
+     - update【android support library -> 27.1.1】&【Glide -> 4.7.1】
+     
 License
 ====
   ```
