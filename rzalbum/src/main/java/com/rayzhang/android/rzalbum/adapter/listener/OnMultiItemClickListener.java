@@ -5,10 +5,9 @@ package com.rayzhang.android.rzalbum.adapter.listener;
  * 實作ViewHolder的點擊事件
  */
 
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 public interface OnMultiItemClickListener {
-    void onMultiItemClick(View view, int viewPosition, int itemPositon);
-
-    void onMultiItemLongClick(View view, int viewPosition, int itemPositon);
+    void onItemClick(RecyclerView.ViewHolder viewHolder, View view, int viewPosition, int itemPosition);
 }

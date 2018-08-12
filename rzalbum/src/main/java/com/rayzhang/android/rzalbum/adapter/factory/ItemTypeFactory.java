@@ -14,14 +14,26 @@ import com.rayzhang.android.rzalbum.model.AlbumPhoto;
  */
 
 public class ItemTypeFactory {
+    private static volatile ItemTypeFactory itemTypeFactory;
+    private int wh;
     private static final int PHOTO_ITEM = AlbumPhoto.PHOTO_ITEM;
     private static final int FOLDER_ITEM = AlbumFolder.FOLDER_ITEM;
 
-    public BaseViewHolder createViewHolder(int type, View itemView) {
+    public static ItemTypeFactory instance(int wh) {
+        if (itemTypeFactory == null) itemTypeFactory = new ItemTypeFactory(wh);
+        return itemTypeFactory;
+    }
+
+    private ItemTypeFactory(int wh) {
+        this.wh = wh;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends IItemType> BaseViewHolder<T> createViewHolder(int type, View itemView) {
         if (type == PHOTO_ITEM) {
-            return new PhotoViewHolder(itemView);
+            return (BaseViewHolder<T>) new PhotoViewHolder(wh, itemView);
         } else if (type == FOLDER_ITEM) {
-            return new FolderViewHolder(itemView);
+            return (BaseViewHolder<T>) new FolderViewHolder(itemView);
         } else {
             return null;
         }

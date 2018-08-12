@@ -258,7 +258,7 @@ public class RZZoomImgView extends android.support.v7.widget.AppCompatImageView 
             setImageMatrix(mScaleMatrix);
 
             float currentScale = getScaleValue();
-            // 如果當前想要放大，並且當前縮放值小於目標縮放值 或者 當前想要縮小，並且當前縮放值大於目標縮放值
+
             if ((tmpScale > 1.0f && currentScale < mTargetScale) || (tmpScale < 1.0f && currentScale > mTargetScale)) {
                 // 每16ms進行一次
                 postDelayed(this, 16);
@@ -296,11 +296,9 @@ public class RZZoomImgView extends android.support.v7.widget.AppCompatImageView 
             return true;
         }
 
-        /*
-         * 縮放比例判斷
-         * 如果scaleFactor大於1，說明想放大，當前的縮放比例乘以scaleFactor之後小於 最大的縮放比例時，允許放大
-         * 如果scaleFactor小於1，說明想縮小，當前的縮放比例乘以scaleFactor之後大於 最小的縮放比例時，允許縮小
-         */
+        // 縮放比例判斷
+        // 如果scaleFactor大於1，說明想放大，當前的縮放比例乘以scaleFactor之後小於 最大的縮放比例時，允許放大
+        // 如果scaleFactor小於1，說明想縮小，當前的縮放比例乘以scaleFactor之後大於 最小的縮放比例時，允許縮小
         // (scale < mMaxScale && scaleFactor > 1.0f) || (scale > mInitScale && scaleFactor < 1.0f)
         if ((scale < mMaxOverScale && scaleFactor > 1.0f) || (scale > mMinScale && scaleFactor < 1.0f)) {
 
@@ -324,7 +322,6 @@ public class RZZoomImgView extends android.support.v7.widget.AppCompatImageView 
             //mScaleMatrix.postScale(scaleFactor, scaleFactor, getWidth() / 2, getHeight() / 2);
             // 以手指觸摸中心為準
             mScaleMatrix.postScale(scaleFactor, scaleFactor, detector.getFocusX(), detector.getFocusY());
-            // /因為圖片的縮放點不是圖片的中心點了，所以圖片會出現偏移的現象，所以進行一次邊界的檢查和居中操作
             checkBorderAndCenterWhenScale();
             setImageMatrix(mScaleMatrix);
         }
@@ -386,7 +383,6 @@ public class RZZoomImgView extends android.support.v7.widget.AppCompatImageView 
                 delTaY = height - rectF.bottom;
             }
         }
-        // 如果圖片的寬度小於控件的寬度，我們要對圖片做一個水平的居中
         if (rectF.width() < width) {
             delTaX = width / 2 - rectF.right + rectF.width() / 2;
         }
@@ -399,7 +395,7 @@ public class RZZoomImgView extends android.support.v7.widget.AppCompatImageView 
     }
 
     private void checkBorderWhenTranslate() {
-        // 當平移時，檢查上下左右邊界
+
 
         RectF rectF = getMatrixRectF();
         float delTaX = 0.0f;

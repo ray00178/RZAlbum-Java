@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="rz_colorPrimary">#ff512da8</color>
+    <color name="rz_colorPrimary">#ff673ab7</color>
     <color name="rz_colorPrimaryDark">#ff673ab7</color>
     <color name="rz_colorAccent">#ffffc107</color>
 

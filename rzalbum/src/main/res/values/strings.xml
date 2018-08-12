@@ -1,16 +1,21 @@
 <resources>
-    <string name="app_name">RZAlbum</string>
+    <string name="rz_app_name">RZAlbum</string>
     <string name="rz_album_dia_read_description">讀取權限允許說明</string>
     <string name="rz_album_dia_read_message">選擇照片 必須要取得您的同意，才可以使用。是否可以允許取得？</string>
     <string name="rz_album_dia_camera_description">拍照權限允許說明</string>
     <string name="rz_album_dia_camera_message">拍攝照片 必須要取得您的同意，才可以使用。是否可以允許取得？</string>
-    <string name="rz_album_dia_ok">允許</string>
+    <string name="rz_album_dia_ok">好</string>
     <string name="rz_album_dia_cancel">不要</string>
     <string name="rz_album_dia_read_description_denied">選擇照片功能已被拒絕</string>
     <string name="rz_album_dia_read_message_denied">請至手機設定 → 應用程式 → %1$s → 權限，將【儲存】開啟</string>
     <string name="rz_album_dia_camera_description_denied">拍攝照片功能已被拒絕</string>
     <string name="rz_album_dia_camera_message_denied">請至手機設定 → 應用程式 → %1$s → 權限，將【相機】開啟</string>
-    <string name="rz_album_dia_know">知道了</string>
-    <string name="rz_scrollhide_behavior" translatable="false">com.rayzhang.android.rzalbum.behavior.ScrollHideBehavior</string>
-    <string name="rz_floatbut_behavior" translatable="false">com.rayzhang.android.rzalbum.behavior.FloatbutBehavior</string>
+    <string name="rz_album_dia_go_setting">前往設定</string>
+    <string name="rz_album_all_folder_name">All Photos</string>
+    <string name="rz_album_menu_camera">Camera</string>
+    <string name="rz_album_gif">GIF</string>
+    <string name="rz_album_folder_count">%1$s (%2$d)</string>
+    <string name="rz_album_limit_count">最多選擇%d張</string>
+    <string name="rz_album_camera_not_found">該設備無相機功能！</string>
+    <string name="rz_album_fatbut_scroll_hide_behavior" translatable="false">com.rayzhang.android.rzalbum.behavior.FatButtonScrollHideBehavior</string>
 </resources>

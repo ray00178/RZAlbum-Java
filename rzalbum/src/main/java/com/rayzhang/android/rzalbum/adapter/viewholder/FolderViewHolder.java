@@ -13,17 +13,21 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.rayzhang.android.rzalbum.R;
 import com.rayzhang.android.rzalbum.adapter.base.BaseViewHolder;
+import com.rayzhang.android.rzalbum.adapter.factory.IItemType;
 import com.rayzhang.android.rzalbum.model.AlbumFolder;
+import com.rayzhang.android.rzalbum.utils.DrawableUtils;
+
+import java.util.Locale;
 
 /**
  * Created by Ray on 2017/8/19.
  * FolderViewHolder
  */
 
-public class FolderViewHolder extends BaseViewHolder {
+public class FolderViewHolder extends BaseViewHolder<AlbumFolder> {
     private RelativeLayout rzFolderViewHolder;
     private ImageView rzImgView;
-    private TextView rzTextFolder;
+    private TextView rzFolderText;
     private RadioButton rzRadioBut;
 
     public FolderViewHolder(View itemView) {
@@ -31,7 +35,7 @@ public class FolderViewHolder extends BaseViewHolder {
 
         rzFolderViewHolder = (RelativeLayout) getView(R.id.rzFolderViewHolder);
         rzImgView = (ImageView) getView(R.id.rzImgView);
-        rzTextFolder = (TextView) getView(R.id.rzTextFolder);
+        rzFolderText = (TextView) getView(R.id.rzFolderText);
         rzRadioBut = (RadioButton) getView(R.id.rzRadioBut);
     }
 
@@ -46,26 +50,21 @@ public class FolderViewHolder extends BaseViewHolder {
     }
 
     @Override
-    public void bindViewData(Context context, Object data, int itemPosition) {
-        AlbumFolder folder = (AlbumFolder) data;
+    public void bindViewData(Context context, AlbumFolder data, int itemPosition) {
         Glide.with(context)
-                .load(folder.getFolderPhotos().get(0).getPhotoPath())
                 .asBitmap()
-                .placeholder(R.drawable.ic_place_img_50dp)
-                .error(R.drawable.ic_place_img_50dp)
+                .load(data.getFolderPhotos().get(0).getPhotoPath())
                 .into(rzImgView);
 
-        int count = folder.getFolderPhotos().size();
-        rzTextFolder.setText(folder.getFolderName() + " (" + count + ") ");
-        rzRadioBut.setChecked(folder.isCheck());
+        rzFolderText.setText(String.format(Locale.TAIWAN,
+                context.getResources().getString(R.string.rz_album_folder_count),
+                data.getFolderName(), data.getFolderPhotos().size()));
+        rzRadioBut.setChecked(data.isCheck());
         rzRadioBut.setClickable(false);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            int[] colors = new int[]{folder.getPickColor(), Color.argb(255, 77, 77, 77)};
-            int[][] states = new int[2][];
-            states[0] = new int[]{android.R.attr.state_checked};
-            states[1] = new int[]{};
-            ColorStateList colorStateList = new ColorStateList(states, colors);
-            rzRadioBut.setButtonTintList(colorStateList);
+            int[] colors = new int[]{data.getPickColor(), Color.argb(255, 77, 77, 77)};
+            rzRadioBut.setButtonTintList(DrawableUtils.drawableOfColorStateList(colors, android.R.attr.state_checked));
         }
     }
 }

@@ -14,30 +14,19 @@ import java.util.ArrayList;
  */
 
 public class AlbumFolder implements Parcelable, IItemType {
-    public static final int FOLDER_ITEM = R.layout.rz_album_adapter_folder;
-    private int folderID;
-    /**
-     * 資料夾名稱
-     */
+    public static final int FOLDER_ITEM = R.layout.rz_album_adapter_linear_folder_item;
+
+    private int folderId;
     private String folderName;
-    /**
-     * 資料夾內 所有的照片
-     */
     private ArrayList<AlbumPhoto> folderPhotos = new ArrayList<>();
-    /**
-     * 資料夾是否被選中
-     */
     private boolean isCheck;
-    /**
-     * radioButton color
-     */
     private int pickColor;
 
     public AlbumFolder() {
     }
 
     protected AlbumFolder(Parcel in) {
-        folderID = in.readInt();
+        folderId = in.readInt();
         folderName = in.readString();
         folderPhotos = in.createTypedArrayList(AlbumPhoto.CREATOR);
         isCheck = in.readByte() != 0;
@@ -56,12 +45,12 @@ public class AlbumFolder implements Parcelable, IItemType {
         }
     };
 
-    public int getFolderID() {
-        return folderID;
+    public int getFolderId() {
+        return folderId;
     }
 
-    public void setFolderID(int folderID) {
-        this.folderID = folderID;
+    public void setFolderId(int folderId) {
+        this.folderId = folderId;
     }
 
     public String getFolderName() {
@@ -76,8 +65,8 @@ public class AlbumFolder implements Parcelable, IItemType {
         return folderPhotos;
     }
 
-    public void addPhoto(AlbumPhoto photo) {
-        this.folderPhotos.add(photo);
+    public void setFolderPhotos(ArrayList<AlbumPhoto> folderPhotos) {
+        this.folderPhotos = folderPhotos;
     }
 
     public boolean isCheck() {
@@ -97,9 +86,23 @@ public class AlbumFolder implements Parcelable, IItemType {
     }
 
     @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(folderId);
+        dest.writeString(folderName);
+        dest.writeTypedList(folderPhotos);
+        dest.writeByte((byte) (isCheck ? 1 : 0));
+        dest.writeInt(pickColor);
+    }
+
+    @Override
     public String toString() {
         return "AlbumFolder{" +
-                "folderID=" + folderID +
+                "folderId=" + folderId +
                 ", folderName='" + folderName + '\'' +
                 ", folderPhotos=" + folderPhotos +
                 ", isCheck=" + isCheck +
@@ -108,21 +111,7 @@ public class AlbumFolder implements Parcelable, IItemType {
     }
 
     @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(folderID);
-        dest.writeString(folderName);
-        dest.writeTypedList(folderPhotos);
-        dest.writeByte((byte) (isCheck ? 1 : 0));
-        dest.writeInt(pickColor);
-    }
-
-    @Override
-    public int itemType() {
+    public int itemLayout() {
         return FOLDER_ITEM;
     }
 }

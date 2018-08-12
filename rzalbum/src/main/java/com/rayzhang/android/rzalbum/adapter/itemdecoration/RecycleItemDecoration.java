@@ -36,7 +36,7 @@ public class RecycleItemDecoration extends RecyclerView.ItemDecoration {
     }
 
     private void initPaint(int dividerColor) {
-        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
         mPaint.setDither(true);
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setColor(dividerColor);
@@ -151,18 +151,18 @@ public class RecycleItemDecoration extends RecyclerView.ItemDecoration {
 
         RecyclerView.LayoutManager manager = parent.getLayoutManager();
         if (manager instanceof GridLayoutManager) {
-            drawVerticlDivider(c, parent);
+            drawVerticalDivider(c, parent);
             drawHorizontalDivider(c, parent);
         } else if (manager instanceof LinearLayoutManager) {
             if (((LinearLayoutManager) manager).getOrientation() == LinearLayoutManager.VERTICAL) {
-                drawVerticlDivider(c, parent);
+                drawVerticalDivider(c, parent);
             } else {
                 drawHorizontalDivider(c, parent);
             }
         }
     }
 
-    private void drawVerticlDivider(Canvas c, RecyclerView parent) {
+    private void drawVerticalDivider(Canvas c, RecyclerView parent) {
         int childCount = parent.getChildCount();
         int left = parent.getPaddingLeft();
         int right = parent.getWidth() - parent.getPaddingRight();

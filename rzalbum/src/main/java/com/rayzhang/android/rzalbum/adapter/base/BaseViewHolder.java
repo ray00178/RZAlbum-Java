@@ -5,12 +5,14 @@ import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.View;
 
+import com.rayzhang.android.rzalbum.adapter.factory.IItemType;
+
 /*
  * Created by Ray on 2017/4/26.
  * BaseViewHolder
  */
 
-public abstract class BaseViewHolder<T> extends RecyclerView.ViewHolder {
+public abstract class BaseViewHolder<T extends IItemType> extends RecyclerView.ViewHolder {
     private SparseArray<View> mViews;
     private View mItemView;
 
@@ -19,6 +21,7 @@ public abstract class BaseViewHolder<T> extends RecyclerView.ViewHolder {
         mItemView = itemView;
         mViews = new SparseArray<>();
     }
+
     protected View getView(int redId) {
         View view = mViews.get(redId);
         if (view == null) {
@@ -28,17 +31,12 @@ public abstract class BaseViewHolder<T> extends RecyclerView.ViewHolder {
         return view;
     }
 
-    /*
-     * 實現view的點擊事件
-     */
+    // 實現view的點擊事件
     public abstract View[] getClickViews();
-    /*
-     * 實現view的長按點擊事件
-     */
+
+    // 實現view的長按點擊事件
     public abstract View[] getLongClickViews();
-    /*
-     * 綁定資料
-     */
-    @SuppressWarnings("unchecked")
-    public abstract void bindViewData(Context context, T t, int itemPosition);
+
+    // 綁定資料
+    public abstract void bindViewData(Context context, T data, int itemPosition);
 }

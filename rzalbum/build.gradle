@@ -3,15 +3,15 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 // 這個版本是區分庫版本的，因此當我們需要更新library時記得修改這個版本
-version = "1.6.0"
+version = "1.7.0"
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 25
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
 
@@ -31,20 +31,22 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:design:25.3.1'
-    compile 'com.android.support:recyclerview-v7:25.3.1'
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:design:27.1.1'
+    implementation 'com.android.support:recyclerview-v7:27.1.1'
+    testImplementation 'junit:junit:4.12'
     // Glide
-    compile 'com.github.bumptech.glide:glide:3.7.0'
+    implementation 'com.github.bumptech.glide:glide:4.7.1'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
+    //implementation 'com.github.bumptech.glide:glide:3.7.0'
 }
 
-def siteUrl = 'https://github.com/ray00178/RayZhangAlbum.git'      // 項目的主頁
-def gitUrl = 'https://github.com/ray00178/RayZhangAlbum.git'       // Git倉庫的url
+def siteUrl = 'https://github.com/ray00178/RZAlbum-Java.git'      // 項目的主頁
+def gitUrl = 'https://github.com/ray00178/RZAlbum-Java.git'       // Git倉庫的url
 group = "com.rayzhang.android"         // Maven Group ID for the artifact，一般填你唯一的包名
 install {
     repositories.mavenInstaller {
@@ -53,19 +55,19 @@ install {
             project {
                 packaging 'aar'
                 // Add your description here
-                name 'It\'s very easy to select photo for Android.'
+                name 'It\'s very easy to select photo for Android.✔︎'
                 url siteUrl
                 // Set your license
                 licenses {
                     license {
                         name 'MIT'
-                        url 'https://github.com/ray00178/RayZhangAlbum'
+                        url 'https://github.com/ray00178/RZAlbum-Java'
                     }
                 }
                 developers { // 填寫一些開發者的訊息
                     developer {
                         id 'ray00178'
-                        name 'ray'
+                        name 'Ray'
                         email 'ray00178@gmail.com'
                     }
                 }
@@ -101,7 +103,7 @@ bintray {
     key = properties.getProperty("bintray.apikey")
     configurations = ['archives']
     pkg {
-        repo = "maven"      // 這邊是對應jCenter的倉庫名稱
+        repo = "maven"      // 這邊是對應jCenter的倉庫名稱(maven)
         name = "rzalbum"    // 發佈到jCenter上的項目名稱
         websiteUrl = siteUrl
         vcsUrl = gitUrl

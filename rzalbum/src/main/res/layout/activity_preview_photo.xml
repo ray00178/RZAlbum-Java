@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/rzViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- 底部控制列 -->
+    <RelativeLayout
+        android:id="@+id/rzBottomView"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:layout_gravity="bottom"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp">
+
+        <ImageButton
+            android:id="@+id/rzBackImgBut"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:background="?android:attr/selectableItemBackground"
+            android:src="@drawable/ic_arrow_back_black"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/rzIndexText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toEndOf="@+id/rzBackImgBut"
+            android:layout_toLeftOf="@id/rzNumberView"
+            android:layout_toRightOf="@id/rzBackImgBut"
+            android:layout_toStartOf="@+id/rzNumberView"
+            android:gravity="center"
+            android:textColor="@color/rz_colorOfBlack"
+            android:textSize="16sp"
+            tools:text="(1/1000)" />
+
+        <com.rayzhang.android.rzalbum.widget.RZPhotoNumberView
+            android:id="@+id/rzNumberView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
+</FrameLayout>

@@ -2,7 +2,6 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/mCoorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.rayzhang.android.rzalbum.RZAlbumActivity">
@@ -19,23 +18,24 @@
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/mRecyView"
+        android:id="@+id/mRZRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/mFabFloderBut"
+        android:id="@+id/mFabFolderBut"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
         android:layout_marginBottom="@dimen/rz_fab_margin_bottom"
         android:elevation="6dp"
-        android:src="@drawable/rz_fab_floder_25_3dp"
+        android:src="@drawable/rz_fab_folder_25_3dp"
         android:translationZ="12dp"
         android:visibility="invisible"
         app:backgroundTint="@android:color/white"
-        app:borderWidth="0dp" />
+        app:borderWidth="0dp"
+        tools:targetApi="lollipop" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/mFabDoneBut"
@@ -48,7 +48,8 @@
         android:translationZ="12dp"
         android:visibility="invisible"
         app:backgroundTint="@android:color/white"
-        app:borderWidth="0dp" />
+        app:borderWidth="0dp"
+        tools:targetApi="lollipop" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/mFabMultiBut"
@@ -61,5 +62,6 @@
         android:translationZ="12dp"
         app:backgroundTint="@android:color/white"
         app:borderWidth="0dp"
-        app:layout_behavior="@string/rz_floatbut_behavior" />
+        app:layout_behavior="@string/rz_album_fatbut_scroll_hide_behavior"
+        tools:targetApi="lollipop" />
 </android.support.design.widget.CoordinatorLayout>

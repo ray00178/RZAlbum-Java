@@ -23,26 +23,27 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.rayzhang.android.rzalbum.adapter.UtilAdapter;
+import com.rayzhang.android.rzalbum.adapter.MultiAdapter;
 import com.rayzhang.android.rzalbum.adapter.itemdecoration.RecycleItemDecoration;
 import com.rayzhang.android.rzalbum.adapter.listener.OnMultiItemClickListener;
+import com.rayzhang.android.rzalbum.common.RZConfig;
 import com.rayzhang.android.rzalbum.model.AlbumFolder;
 import com.rayzhang.android.rzalbum.model.AlbumPhoto;
 import com.rayzhang.android.rzalbum.utils.AlbumScanner;
 import com.rayzhang.android.rzalbum.utils.AnimationHelper;
+import com.rayzhang.android.rzalbum.utils.DisplayUtils;
 import com.rayzhang.android.rzalbum.utils.FileProviderUtils;
 import com.rayzhang.android.rzalbum.utils.MainHandler;
-import com.rayzhang.android.rzalbum.view.PreviewPhotoActivty;
+import com.rayzhang.android.rzalbum.utils.Utils;
+import com.rayzhang.android.rzalbum.view.PreviewPhotoActivity;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -52,69 +53,98 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class RZAlbumActivity extends AppCompatActivity implements View.OnClickListener {
-    private static final String TAG = RZAlbumActivity.class.getSimpleName();
-    private static final int PERMISSION_REQUEST_STORAGE = 9998;
-    private static final int PERMISSION_REQUEST_CAMERA = 9999;
-    private static final int ACTIVITY_REQUEST_CAMERA = 9997;
-    private static final int ACTIVITY_REQUEST_PREVIEW = 9996;
-    private static final int STATUSBAR_COLOR = Color.parseColor("#ff512da8");
-    private static final int TOOLBAR_COLOR = Color.parseColor("#ff673ab7");
-    private static final int PICK_COLOR = Color.parseColor("#ffffc107");
-    private static final int DEFAULT_LIMIT_COUNT = 5;
-    private static final int DEFAULT_SAPN_COUNT = 3;
-    private static final String TOOLBAR_TITLE = "RZAlbum";
+    private final String TAG = RZAlbumActivity.class.getSimpleName();
+    private final String PERMISSION_READ_EXTERNAL_STORAGE = Manifest.permission.READ_EXTERNAL_STORAGE;
+    private final String PERMISSION_CAMERA = Manifest.permission.CAMERA;
+    private final int PERMISSION_REQUEST_STORAGE = 6666;
+    private final int PERMISSION_REQUEST_CAMERA = PERMISSION_REQUEST_STORAGE + 1;
+    private final int ACTIVITY_REQUEST_CAMERA = 7777;
+    private final int ACTIVITY_REQUEST_PREVIEW = ACTIVITY_REQUEST_CAMERA + 1;
 
-    private FloatingActionButton mFabMultiBut, mFabFloderBut, mFabDoneBut;
-    private UtilAdapter adapter;
+    private String appName = RZConfig.APP_NAME;
+    private String toolBarTitle = RZConfig.TOOLBAR_TITLE;
+    private int spanCount = RZConfig.DEFAULT_SPAN_COUNT;
+    private int limitCount = RZConfig.DEFAULT_LIMIT_COUNT;
+    private int statusBarColor = RZConfig.DEFAULT_STATUS_BAR_COLOR;
+    private int toolBarColor = RZConfig.DEFAULT_TOOLBAR_COLOR;
+    private int pickColor = RZConfig.DEFAULT_PICK_COLOR;
+    private boolean showCamera = RZConfig.DEFAULT_SHOW_CAMERA;
+    private boolean showGif = RZConfig.DEFAULT_SHOW_GIF;
+    private int orientation = RZConfig.DEFAULT_ORIENTATION;
+    private String folderName = "";
+    private int dialogIcon = -1;
+
     private RecyclerView.LayoutManager mLayoutManager;
-    private String appName, toolBarTitle;
-    private int spanCount, limitCount;
-    private int toolBarColor, pickColor;
-    private int dialogIcon;
-    private boolean isShowCamera;
-    private int orientation;
+    private MultiAdapter<AlbumPhoto> mMultiAdapter;
+    private FloatingActionButton mFabMultiBut, mFabFolderBut, mFabDoneBut;
 
+    private BottomSheetDialog mBottomSheetDialog;
+    private RecyclerView mBottomRecyclerView;
+    private MultiAdapter<AlbumFolder> mBottomAdapter;
+
+    // 相簿資料夾
     private List<AlbumFolder> mAlbumFolders;
-    private BottomSheetDialog dialog;
-    private RecyclerView bottomView;
-    private UtilAdapter bottomAdapter;
-    // 紀錄選到的圖片
-    private List<AlbumPhoto> photoList;
+    // 紀錄選擇到的Photo
+    private List<AlbumPhoto> addPhotos;
+    // 儲存照片的路徑
+    private String mCameraPath;
 
     private ExecutorService mSingleExecutor;
-    private MediaScannerConnection connection;
-    private String mCameraPath;
+    private Runnable scanAlbumRunnable = new Runnable() {
+        @Override
+        public void run() {
+            folderName = folderName.isEmpty() ? getResources().getString(R.string.rz_album_all_folder_name) : folderName;
+            mAlbumFolders = AlbumScanner.instances(pickColor, showGif).getPhotoAlbum(RZAlbumActivity.this, folderName);
+            MainHandler.instances().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (isFinishing()) {
+                        mAlbumFolders.clear();
+                        mAlbumFolders = null;
+                    } else {
+                        showAlbum(0);
+                    }
+                }
+            }, 200L);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rzalbum);
 
+        DisplayUtils.instance(this.getApplicationContext());
+
         Bundle bundle = getIntent().getExtras();
-        appName = bundle.getString(RZAlbum.ALBUM_APP_NAME);
-        limitCount = bundle.getInt(RZAlbum.ALBUM_LIMIT_COUNT, DEFAULT_LIMIT_COUNT);
-        spanCount = bundle.getInt(RZAlbum.ALBUM_SPAN_COUNT, DEFAULT_SAPN_COUNT);
-        int statusBarColor = bundle.getInt(RZAlbum.ALBUM_STATUSBAR_COLOR, STATUSBAR_COLOR);
-        toolBarTitle = bundle.getString(RZAlbum.ALBUM_TOOLBAR_TITLE, TOOLBAR_TITLE);
-        toolBarColor = bundle.getInt(RZAlbum.ALBUM_TOOLBAR_COLOR, TOOLBAR_COLOR);
-        pickColor = bundle.getInt(RZAlbum.ALBUM_PICK_COLOR, PICK_COLOR);
-        dialogIcon = bundle.getInt(RZAlbum.ALBUM_DIALOG_ICON, R.drawable.ic_info_description_30_2dp);
-        isShowCamera = bundle.getBoolean(RZAlbum.ALBUN_SHOW_CAMERA, true);
-        orientation = bundle.getInt(RZAlbum.ALBUM_PREVIEW_ORIENTATION, RZAlbum.ORIENTATION_AUTO);
+        if (bundle != null) {
+            appName = bundle.getString(RZConfig.APP_NAME, RZConfig.DEFAULT_APP_NAME);
+            limitCount = bundle.getInt(RZConfig.LIMIT_COUNT, RZConfig.DEFAULT_LIMIT_COUNT);
+            spanCount = bundle.getInt(RZConfig.SPAN_COUNT, RZConfig.DEFAULT_SPAN_COUNT);
+            statusBarColor = bundle.getInt(RZConfig.STATUS_BAR_COLOR, RZConfig.DEFAULT_STATUS_BAR_COLOR);
+            toolBarTitle = bundle.getString(RZConfig.TOOLBAR_TITLE, RZConfig.DEFAULT_TOOLBAR_TITLE);
+            toolBarColor = bundle.getInt(RZConfig.TOOLBAR_COLOR, RZConfig.DEFAULT_TOOLBAR_COLOR);
+            showCamera = bundle.getBoolean(RZConfig.SHOW_CAMERA, RZConfig.DEFAULT_SHOW_CAMERA);
+            showGif = bundle.getBoolean(RZConfig.SHOW_GIF, RZConfig.DEFAULT_SHOW_GIF);
+            orientation = bundle.getInt(RZConfig.PREVIEW_ORIENTATION, RZConfig.ORIENTATION_AUTO);
+            pickColor = bundle.getInt(RZConfig.PICK_COLOR, RZConfig.DEFAULT_PICK_COLOR);
+            folderName = bundle.getString(RZConfig.ALL_FOLDER_NAME, "");
+            dialogIcon = bundle.getInt(RZConfig.DIALOG_ICON, -1);
+        }
 
         mSingleExecutor = Executors.newSingleThreadExecutor();
-        photoList = new ArrayList<>();
-        setStatusBarColor(statusBarColor);
-        initView();
-        scanAllAlbum();
+        addPhotos = new ArrayList<>();
+        setupView();
+        requestScanPhotos();
     }
 
-    private void initView() {
-        Toolbar mToolBar = (Toolbar) findViewById(R.id.mToolBar);
+    private void setupView() {
+        Utils.setStatusBarColor(this, statusBarColor);
+        Toolbar mToolBar = findViewById(R.id.mToolBar);
         mToolBar.setTitle(toolBarTitle);
         mToolBar.setTitleTextColor(Color.WHITE);
         mToolBar.setBackgroundColor(toolBarColor);
-        mToolBar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        mToolBar.setNavigationIcon(R.drawable.ic_arrow_back_white);
         mToolBar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -122,9 +152,9 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
                 finish();
             }
         });
-        if (isShowCamera) {
-            mToolBar.getMenu().add(0, 0, 0, "Camera")
-                    .setIcon(R.drawable.ic_camera_24dp).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        if (showCamera) {
+            mToolBar.getMenu().add(0, 0, 0, getResources().getString(R.string.rz_album_menu_camera))
+                    .setIcon(R.drawable.ic_camera).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
             mToolBar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
@@ -137,171 +167,79 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
             });
         }
 
-        RecyclerView mRecyView = (RecyclerView) findViewById(R.id.mRecyView);
+        RecyclerView mRZRecyclerView = findViewById(R.id.mRZRecyclerView);
         mLayoutManager = new GridLayoutManager(this, spanCount, GridLayoutManager.VERTICAL, false);
-        mRecyView.setLayoutManager(mLayoutManager);
-        mRecyView.setHasFixedSize(true);
-        mRecyView.setItemAnimator(null);
-        mRecyView.addItemDecoration(new RecycleItemDecoration(2, Color.argb(255, 255, 255, 255)));
-        adapter = new UtilAdapter(this, null);
-        mRecyView.setAdapter(adapter);
+        mRZRecyclerView.setLayoutManager(mLayoutManager);
+        mRZRecyclerView.setHasFixedSize(true);
+        mRZRecyclerView.setItemAnimator(null);
+        int itemSize = 1;
+        mRZRecyclerView.addItemDecoration(new RecycleItemDecoration(itemSize, Color.argb(255, 255, 255, 255)));
+        int itemWH = (DisplayUtils.screenW - (itemSize * (spanCount - 1))) / spanCount;
+        mMultiAdapter = new MultiAdapter<>(null, itemWH);
+        mRZRecyclerView.setAdapter(mMultiAdapter);
 
-        mFabMultiBut = (FloatingActionButton) findViewById(R.id.mFabMultiBut);
-        mFabFloderBut = (FloatingActionButton) findViewById(R.id.mFabFloderBut);
-        mFabDoneBut = (FloatingActionButton) findViewById(R.id.mFabDoneBut);
+        mMultiAdapter.setOnItemClickListener(new OnMultiItemClickListener() {
+            @Override
+            public void onItemClick(RecyclerView.ViewHolder viewHolder, View view, int viewPosition, int itemPosition) {
+                if (viewPosition == 0) {
+                    photoPreview(itemPosition);
+                } else {
+                    photoPick(itemPosition);
+                }
+            }
+        });
+
+        mFabMultiBut = findViewById(R.id.mFabMultiBut);
+        mFabFolderBut = findViewById(R.id.mFabFolderBut);
+        mFabDoneBut = findViewById(R.id.mFabDoneBut);
         mFabMultiBut.setAlpha(.8f);
         mFabMultiBut.setOnClickListener(this);
-        mFabFloderBut.setOnClickListener(this);
+        mFabFolderBut.setOnClickListener(this);
         mFabDoneBut.setOnClickListener(this);
 
-        // pick folder view
-        bottomView = (RecyclerView) LayoutInflater.from(this).inflate(R.layout.rz_album_bottom_view, null);
+        // Bottom Adapter
+        mBottomRecyclerView = new RecyclerView(this);
+        mBottomRecyclerView.setBackgroundColor(Color.argb(255, 255, 255, 255));
+        mBottomRecyclerView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
         RecyclerView.LayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        bottomView.setLayoutManager(manager);
-        bottomView.setHasFixedSize(true);
-        bottomView.addItemDecoration(new RecycleItemDecoration(1, Color.LTGRAY));
-        bottomAdapter = new UtilAdapter(this, null);
-        bottomView.setAdapter(bottomAdapter);
+        mBottomRecyclerView.setLayoutManager(manager);
+        mBottomRecyclerView.setHasFixedSize(true);
+        mBottomRecyclerView.addItemDecoration(new RecycleItemDecoration(1, Color.LTGRAY));
+        mBottomAdapter = new MultiAdapter<>(null);
+        mBottomRecyclerView.setAdapter(mBottomAdapter);
     }
 
-    private void setStatusBarColor(int statusBarColor) {
-        if (Build.VERSION.SDK_INT >= 21) {
-            Window window = getWindow();
-            if (window != null) {
-                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                window.setStatusBarColor(statusBarColor);
-                window.setNavigationBarColor(Color.BLACK);
-            }
-        }
-    }
-
-    private void scanAllAlbum() {
+    private void requestScanPhotos() {
         if (Build.VERSION.SDK_INT >= 23) {
-            int permissionResult = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+            int permissionResult = ContextCompat.checkSelfPermission(this, PERMISSION_READ_EXTERNAL_STORAGE);
             if (permissionResult != PackageManager.PERMISSION_GRANTED) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, PERMISSION_READ_EXTERNAL_STORAGE)) {
                     // 第一次被使用者拒絕後，這邊做些解釋的動作
                     showDescriptionDialog(1);
                 } else {
                     // 第一次詢問
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{PERMISSION_READ_EXTERNAL_STORAGE},
                             PERMISSION_REQUEST_STORAGE);
                 }
             } else {
-                mSingleExecutor.execute(scanner);
+                mSingleExecutor.execute(scanAlbumRunnable);
             }
         } else {
-            mSingleExecutor.execute(scanner);
-        }
-    }
-
-    /*
-     * Scan image.
-     */
-    private Runnable scanner = new Runnable() {
-        @Override
-        public void run() {
-            mAlbumFolders = AlbumScanner.instances(pickColor).getPhotoAlbum(RZAlbumActivity.this);
-            MainHandler.instances().postDelayed(initUI, 200);
-        }
-    };
-
-    /*
-     * init ui
-     */
-    private Runnable initUI = new Runnable() {
-        @Override
-        public void run() {
-            if (!isFinishing()) {
-                showAlbum(0);
-            } else {
-                mAlbumFolders.clear();
-                mAlbumFolders = null;
-            }
-        }
-    };
-
-    private void showAlbum(int index) {
-        adapter.resetDatas(mAlbumFolders.get(index).getFolderPhotos());
-        mLayoutManager.scrollToPosition(0);
-        changePhotoStatus();
-        adapterItemClick();
-    }
-
-    private void adapterItemClick() {
-        adapter.setOnMultiItemClick(new OnMultiItemClickListener() {
-            @Override
-            public void onMultiItemClick(View view, int viewPosition, int itemPositon) {
-                switch (viewPosition) {
-                    case 0: // preview
-                        photoPreview(itemPositon);
-                        break;
-                    case 1: // pick
-                        photoPick(itemPositon);
-                        break;
-                }
-            }
-
-            @Override
-            public void onMultiItemLongClick(View view, int viewPosition, int itemPositon) {
-
-            }
-        });
-    }
-
-    private void photoPreview(int itemPosition) {
-        Intent preview = new Intent(this, PreviewPhotoActivty.class);
-        preview.putParcelableArrayListExtra(PreviewPhotoActivty.RZ_PREVIEW_PHOTOS, (ArrayList<? extends Parcelable>) photoList);
-        preview.putParcelableArrayListExtra(PreviewPhotoActivty.RZ_PREVIEW_ALL_PHOTOS,
-                (ArrayList<? extends Parcelable>) adapter.getListData());
-        preview.putExtra(PreviewPhotoActivty.RZ_PREVIEW_ITEMPOSITION, itemPosition);
-        preview.putExtra(PreviewPhotoActivty.RZ_PREVIEW_PICK_COLOR, pickColor);
-        preview.putExtra(PreviewPhotoActivty.RZ_PREVIEW_LIMIT_COUNT, limitCount);
-        preview.putExtra(PreviewPhotoActivty.RZ_PREVIEW_ORIENTATION, orientation);
-        startActivityForResult(preview, ACTIVITY_REQUEST_PREVIEW);
-        overridePendingTransition(0, 0);
-    }
-
-    private void photoPick(int itemPosition) {
-        AlbumPhoto photo = (AlbumPhoto) adapter.getListData().get(itemPosition);
-        if (photo.getPickNumber() == 0) {
-            if (photoList.size() == limitCount) {
-                Toast.makeText(RZAlbumActivity.this, String.format(Locale.TAIWAN, "最多選擇%d張", limitCount),
-                        Toast.LENGTH_SHORT).show();
-                return;
-            }
-            photo.setPickNumber(photoList.size() + 1);
-            photoList.add(photo);
-            adapter.notifyItemChanged(itemPosition);
-        } else {
-            if (photoList.size() == 0) return;
-            photoList.remove(photo);
-            photo.setPickNumber(0);
-            adapter.notifyItemChanged(itemPosition);
-            changePhotoStatus();
-        }
-    }
-
-    private void changePhotoStatus() {
-        // 改變item status & index
-        for (int i = 0; i < photoList.size(); i++) {
-            photoList.get(i).setPickNumber(i + 1);
-            int index = adapter.getListData().indexOf(photoList.get(i));
-            if (index != -1) {
-                ((AlbumPhoto) adapter.getListData().get(index)).setPickNumber(i + 1);
-                adapter.notifyItemChanged(index);
-            }
+            mSingleExecutor.execute(scanAlbumRunnable);
         }
     }
 
     private void requestOpenCamera() {
         if (Build.VERSION.SDK_INT >= 23) {
-            int permissionResult = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+            int permissionResult = ContextCompat.checkSelfPermission(this, PERMISSION_CAMERA);
             if (permissionResult != PackageManager.PERMISSION_GRANTED) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, PERMISSION_CAMERA)) {
                     showDescriptionDialog(2);
                 } else {
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA},
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{PERMISSION_CAMERA},
                             PERMISSION_REQUEST_CAMERA);
                 }
             } else {
@@ -312,181 +250,207 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    private void showAlbum(int index) {
+        mMultiAdapter.resetData(mAlbumFolders.get(index).getFolderPhotos());
+        mLayoutManager.scrollToPosition(0);
+        //changePhotoStatus();
+    }
+
     private void openCamera() {
         // 打開手機的照相機
-        Intent camara = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // 判斷手機上是否有可以啟動照相機的應用程式
-        if (camara.resolveActivity(getPackageManager()) != null) {
-            File photoFile = null;
-            try {
-                // 拍照時，將拍得的照片先保存在指定的資料夾中(未缩小)
-                photoFile = createImgFile();
-            } catch (IOException e) {
-                e.printStackTrace();
+        if (camera.resolveActivity(getPackageManager()) != null) {
+            File photoFile;
+            // 照片命名
+            String uuid = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+            String fileName = String.format(Locale.TAIWAN, "JPEG_%s.jpg", uuid);
+            // 建立目錄
+            File dcimFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+            // 如果目錄不存在就建立
+            if (!dcimFile.exists()) {
+                boolean isCreate = dcimFile.mkdirs();
             }
-            if (photoFile != null) {
-                // 照片存放路徑
-                mCameraPath = photoFile.getAbsolutePath();
-                // 拍照適配Android7.0 up
-                Uri fileUri = FileProviderUtils.getUriForFile(this, photoFile);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    FileProviderUtils.grantPermissions(this, camara, fileUri, true);
-                }
-                // 2017-06-11 更改
-                // 如果指定了圖片uri，data就没有數據，如果没有指定uri，則data就返回有數據
-                // 指定圖片输出位置，若無這句則拍照後，圖片會放入內存中，由於占用内存太大導致無法剪切或者剪切後無法保存
-                //camara.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
-                camara.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-                startActivityForResult(camara, ACTIVITY_REQUEST_CAMERA);
+            // 建立檔案(存放的位置, 檔名)
+            // 拍照時，將拍得的照片先保存在指定的資料夾中(未缩小)
+            photoFile = new File(dcimFile, fileName);
+
+            // 照片存放路徑
+            mCameraPath = photoFile.getAbsolutePath();
+            // 拍照適配Android7.0 up
+            Uri fileUri = FileProviderUtils.getUriForFile(this, photoFile);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                FileProviderUtils.grantPermissions(this, camera, fileUri, true);
+            }
+            // 2017-06-11 更改
+            // 如果指定了圖片uri，data就没有數據，如果没有指定uri，則data就返回有數據
+            // 指定圖片输出位置，若無這句則拍照後，圖片會放入內存中，由於占用内存太大導致無法剪切或者剪切後無法保存
+            //camera.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+            camera.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+            startActivityForResult(camera, ACTIVITY_REQUEST_CAMERA);
+        } else {
+            Toast.makeText(this, getResources().getString(R.string.rz_album_camera_not_found), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void photoPreview(int itemPosition) {
+        Intent preview = new Intent(this, PreviewPhotoActivity.class);
+        preview.putParcelableArrayListExtra(RZConfig.PREVIEW_ADD_PHOTOS, (ArrayList<? extends Parcelable>) addPhotos);
+        preview.putParcelableArrayListExtra(RZConfig.PREVIEW_ALL_PHOTOS, (ArrayList<? extends Parcelable>) mMultiAdapter.getDatas());
+        preview.putExtra(RZConfig.PREVIEW_ITEM_POSITION, itemPosition);
+        preview.putExtra(RZConfig.PREVIEW_PICK_COLOR, pickColor);
+        preview.putExtra(RZConfig.PREVIEW_LIMIT_COUNT, limitCount);
+        preview.putExtra(RZConfig.PREVIEW_ORIENTATION, orientation);
+        startActivityForResult(preview, ACTIVITY_REQUEST_PREVIEW);
+        overridePendingTransition(0, 0);
+    }
+
+    private void photoPick(int itemPosition) {
+        AlbumPhoto photo = mMultiAdapter.getDatas().get(itemPosition);
+        if (photo.getPickNumber() == 0) {
+            if (addPhotos.size() == limitCount) {
+                Toast.makeText(RZAlbumActivity.this, String.format(Locale.TAIWAN, getResources().getString(R.string.rz_album_limit_count), limitCount),
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+            photo.setPickNumber(addPhotos.size() + 1);
+            addPhotos.add(photo);
+            mMultiAdapter.notifyItemChanged(itemPosition);
+        } else {
+            if (addPhotos.size() == 0) return;
+            addPhotos.remove(photo);
+            photo.setPickNumber(0);
+            mMultiAdapter.notifyItemChanged(itemPosition);
+            changePhotoPickNumber();
+        }
+    }
+
+    private void changePhotoPickNumber() {
+        // 改變item status & index
+        for (int i = 0; i < addPhotos.size(); i++) {
+            addPhotos.get(i).setPickNumber(i + 1);
+            int index = mMultiAdapter.getDatas().indexOf(addPhotos.get(i));
+            if (index != -1) {
+                mMultiAdapter.getDatas().get(index).setPickNumber(i + 1);
+                mMultiAdapter.notifyItemChanged(index);
             }
         }
     }
 
-    private File createImgFile() throws IOException {
-        // 照片命名
-        String uuid = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-        String fileName = String.format(Locale.TAIWAN, "JEPG_%s.jpg", uuid);
-        // 建立目錄
-        //String imgPath = Environment.getExternalStorageDirectory() + "/RZAlbum_images";
-        //File storeDir = new File(imgPath);
-        File storeDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-        // 如果目錄不存在就建立
-        if (!storeDir.exists()) {
-            boolean isCreate = storeDir.mkdirs();
-        }
-        // 建立檔案(存放的位置, 檔名)
-        return new File(storeDir, fileName);
-    }
-
-    /*
-     * 解釋給使用者 為何要取用權限說明
-     * type = 1(讀取記憶卡) type = 2(拍攝照片)
-     */
     private void showDescriptionDialog(final int type) {
-        String title = getResources().getString(R.string.rz_album_dia_read_description);
-        String msg = getResources().getString(R.string.rz_album_dia_read_message);
-        if (type == 2) {
-            title = getResources().getString(R.string.rz_album_dia_camera_description);
-            msg = getResources().getString(R.string.rz_album_dia_camera_message);
-        }
-        new AlertDialog.Builder(this)
+        String title = type == 1 ? getResources().getString(R.string.rz_album_dia_read_description) : getResources().getString(R.string.rz_album_dia_camera_description);
+        String msg = type == 1 ? getResources().getString(R.string.rz_album_dia_read_message) : getResources().getString(R.string.rz_album_dia_camera_message);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setCancelable(false)
-                .setIcon(dialogIcon)
                 .setTitle(title)
                 .setMessage(msg)
                 .setPositiveButton(R.string.rz_album_dia_ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // 再一次請求
-                        if (type == 1) {
-                            ActivityCompat.requestPermissions(RZAlbumActivity.this,
-                                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_STORAGE);
-                        } else {
-                            ActivityCompat.requestPermissions(RZAlbumActivity.this, new String[]{Manifest.permission.CAMERA},
-                                    PERMISSION_REQUEST_CAMERA);
-                        }
+                        ActivityCompat.requestPermissions(RZAlbumActivity.this,
+                                type == 1 ? new String[]{PERMISSION_READ_EXTERNAL_STORAGE} : new String[]{PERMISSION_CAMERA},
+                                type == 1 ? PERMISSION_REQUEST_STORAGE : PERMISSION_REQUEST_CAMERA);
                     }
                 })
                 .setNegativeButton(R.string.rz_album_dia_cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        // 退出activity
-                        if (type == 1) {
-                            RZAlbumActivity.this.finish();
-                        }
+                        if (type == 1) RZAlbumActivity.this.finish();
                     }
-                })
-                .show();
+                });
+        if (dialogIcon != -1) builder.setIcon(dialogIcon);
+
+        final AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(pickColor);
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(pickColor);
+            }
+        });
+        dialog.show();
     }
 
-    /*
-     * 權限已被永久拒絕
-     * type = 1(讀取記憶卡) type = 2(拍攝照片)
-     */
-    private void showDeniedDailog(final int type) {
-        String title = getResources().getString(R.string.rz_album_dia_read_description_denied);
-        String msg = String.format(Locale.TAIWAN, getResources().getString(R.string.rz_album_dia_read_message_denied), appName);
-        if (type == 2) {
-            title = getResources().getString(R.string.rz_album_dia_camera_description_denied);
-            msg = String.format(Locale.TAIWAN, getResources().getString(R.string.rz_album_dia_camera_message_denied), appName);
-        }
-        new AlertDialog.Builder(this)
+    private void showDeniedDialog(final int type) {
+        String title = type == 1 ? getResources().getString(R.string.rz_album_dia_read_description_denied) : getResources().getString(R.string.rz_album_dia_camera_description_denied);
+        String msg = type == 1 ?
+                String.format(Locale.TAIWAN, getResources().getString(R.string.rz_album_dia_read_message_denied), appName) :
+                String.format(Locale.TAIWAN, getResources().getString(R.string.rz_album_dia_camera_message_denied), appName);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setCancelable(false)
-                .setIcon(dialogIcon)
                 .setTitle(title)
                 .setMessage(msg)
-                .setPositiveButton(R.string.rz_album_dia_know, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.rz_album_dia_go_setting, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        if (type == 1) {
-                            RZAlbumActivity.this.finish();
-                        }
+                    public void onClick(DialogInterface dialogInterface, int which) {
+                        dialogInterface.dismiss();
+                        Utils.goAppSettingPage(RZAlbumActivity.this);
+                        if (type == 1) RZAlbumActivity.this.finish();
                     }
-                })
-                .show();
+                });
+        if (dialogIcon != -1) builder.setIcon(dialogIcon);
+
+        final AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(pickColor);
+            }
+        });
+        dialog.show();
+    }
+
+    public void fatButHideAnimation(View view) {
+        if (view.isSelected()) {
+            AnimationHelper.hideFabButAnimation(mFabFolderBut, true);
+            AnimationHelper.hideFabButAnimation(mFabDoneBut, false);
+        } else {
+            AnimationHelper.showFabButAnimation(mFabFolderBut, true);
+            AnimationHelper.showFabButAnimation(mFabDoneBut, false);
+        }
+        view.setSelected(!view.isSelected());
     }
 
     private void showBottomDialog() {
         if (mAlbumFolders.get(0).getFolderPhotos().size() == 0) return;
-        if (dialog == null) {
-            dialog = new BottomSheetDialog(this);
-            bottomAdapter.resetDatas(mAlbumFolders);
-            bottomAdapter.setOnMultiItemClick(new OnMultiItemClickListener() {
+        if (mBottomSheetDialog == null) {
+            mBottomSheetDialog = new BottomSheetDialog(this);
+            mBottomAdapter.resetData(mAlbumFolders);
+            mBottomAdapter.setOnItemClickListener(new OnMultiItemClickListener() {
                 @Override
-                public void onMultiItemClick(View view, int viewPosition, int itemPositon) {
-                    showAlbum(itemPositon);
-                    for (int i = 0; i < bottomAdapter.getItemCount(); i++) {
-                        ((AlbumFolder) bottomAdapter.getListData().get(i)).setCheck(false);
+                public void onItemClick(RecyclerView.ViewHolder viewHolder, View view, int viewPosition, int itemPosition) {
+                    showAlbum(itemPosition);
+                    for (int i = 0; i < mBottomAdapter.getItemCount(); i++) {
+                        mBottomAdapter.getDatas().get(i).setCheck(false);
                     }
-                    ((AlbumFolder) bottomAdapter.getListData().get(itemPositon)).setCheck(true);
-                    bottomAdapter.notifyItemRangeChanged(0, bottomAdapter.getItemCount());
-                    dialog.dismiss();
-                }
-
-                @Override
-                public void onMultiItemLongClick(View view, int viewPosition, int itemPositon) {
-
+                    mBottomAdapter.getDatas().get(itemPosition).setCheck(true);
+                    mBottomAdapter.notifyItemRangeChanged(0, mBottomAdapter.getItemCount());
+                    mBottomSheetDialog.dismiss();
                 }
             });
-            dialog.setContentView(bottomView);
-            dialog.setCancelable(true);
-            dialog.setCanceledOnTouchOutside(true);
+            mBottomSheetDialog.setContentView(mBottomRecyclerView);
+            mBottomSheetDialog.setCancelable(true);
+            mBottomSheetDialog.setCanceledOnTouchOutside(true);
         }
-        dialog.show();
+        mBottomSheetDialog.show();
     }
 
     @Override
     public void onClick(View view) {
         int tag = view.getId();
         if (tag == R.id.mFabMultiBut) {
-            fabbutAnimator(mFabMultiBut);
-        } else if (tag == R.id.mFabFloderBut) {
+            fatButHideAnimation(mFabMultiBut);
+        } else if (tag == R.id.mFabFolderBut) {
             showBottomDialog();
-            fabbutAnimator(mFabMultiBut);
+            fatButHideAnimation(mFabMultiBut);
         } else if (tag == R.id.mFabDoneBut) {
             Intent intent = new Intent();
-            ArrayList<String> pathList = new ArrayList<>();
-            for (int i = 0, j = photoList.size(); i < j; i++) {
-                pathList.add(photoList.get(i).getPhotoPath());
-            }
-            intent.putStringArrayListExtra(RZAlbum.ALBUM_IMAGE_PATH_LIST, pathList);
+            intent.putParcelableArrayListExtra(RZConfig.RESULT_PHOTOS, (ArrayList<? extends Parcelable>) addPhotos);
             setResult(RESULT_OK, intent);
             finish();
-            fabbutAnimator(mFabMultiBut);
         }
-    }
-
-    public void fabbutAnimator(View view) {
-        if (view.isSelected()) {
-            AnimationHelper.hideFabButAnimation(mFabFloderBut, true);
-            AnimationHelper.hideFabButAnimation(mFabDoneBut, false);
-        } else {
-            AnimationHelper.showFabButAnimation(mFabFloderBut, true);
-            AnimationHelper.showFabButAnimation(mFabDoneBut, false);
-        }
-        view.setSelected(!view.isSelected());
     }
 
     @Override
@@ -494,24 +458,24 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
         int permissionResult = grantResults[0];
         switch (requestCode) {
             case PERMISSION_REQUEST_STORAGE:
-                if (grantResults.length > 0 && permissionResult == PackageManager.PERMISSION_GRANTED) {
-                    mSingleExecutor.execute(scanner);
+                if (permissionResult == PackageManager.PERMISSION_GRANTED) {
+                    mSingleExecutor.execute(scanAlbumRunnable);
                 } else {
                     if (ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[0])) {
                         showDescriptionDialog(1);
                     } else {
-                        showDeniedDailog(1);
+                        showDeniedDialog(1);
                     }
                 }
                 break;
             case PERMISSION_REQUEST_CAMERA:
-                if (grantResults.length > 0 && permissionResult == PackageManager.PERMISSION_GRANTED) {
+                if (permissionResult == PackageManager.PERMISSION_GRANTED) {
                     openCamera();
                 } else {
                     if (ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[0])) {
                         showDescriptionDialog(2);
                     } else {
-                        showDeniedDailog(2);
+                        showDeniedDialog(2);
                     }
                 }
                 break;
@@ -526,47 +490,52 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case ACTIVITY_REQUEST_CAMERA:
-                    // 掃描完檔案後在PC端即可發現 參考資料 : http://www.binkery.com/archives/473.html
-                    connection = new MediaScannerConnection(this,
-                            new MediaScannerConnection.MediaScannerConnectionClient() {
+                    // 拍照完後透過掃描可在手機端發現剛拍完照的檔案 參考資料 : https://www.jianshu.com/p/bc8b04bffddf
+                    MediaScannerConnection.scanFile(this, new String[]{mCameraPath}, new String[]{RZConfig.JPEG},
+                            new MediaScannerConnection.OnScanCompletedListener() {
                                 @Override
-                                public void onMediaScannerConnected() {
-                                    connection.scanFile(mCameraPath, null);
-                                }
-
-                                @Override
-                                public void onScanCompleted(String s, Uri uri) {
-                                    if (connection.isConnected()) {
-                                        connection.disconnect();
-                                        connection = null;
-                                    }
-                                    Intent intent = new Intent();
-                                    ArrayList<String> pathList = new ArrayList<>();
-                                    pathList.add(mCameraPath);
-                                    intent.putStringArrayListExtra(RZAlbum.ALBUM_IMAGE_PATH_LIST, pathList);
-                                    setResult(RESULT_OK, intent);
-                                    RZAlbumActivity.super.finish();
+                                public void onScanCompleted(String path, final Uri uri) {
+                                    mSingleExecutor.execute(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            final AlbumPhoto photo = AlbumScanner.instances(pickColor, showGif)
+                                                    .getSinglePhoto(RZAlbumActivity.this, uri);
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    Intent result = new Intent();
+                                                    if (photo != null) {
+                                                        ArrayList<AlbumPhoto> list = new ArrayList<>();
+                                                        list.add(photo);
+                                                        result.putParcelableArrayListExtra(RZConfig.RESULT_PHOTOS, list);
+                                                    }
+                                                    setResult(RESULT_OK, result);
+                                                    finish();
+                                                }
+                                            });
+                                        }
+                                    });
                                 }
                             });
-                    connection.connect();
                     break;
                 case ACTIVITY_REQUEST_PREVIEW:
-                    photoList = data.getParcelableArrayListExtra(PreviewPhotoActivty.RZ_PREVIEW_PHOTOS);
-                    List<AlbumPhoto> deleteList = data.getParcelableArrayListExtra(PreviewPhotoActivty.RZ_PREVIEW_DELETES);
-                    // delete
-                    for (int i = 0; i < deleteList.size(); i++) {
-                        AlbumPhoto delete = deleteList.get(i);
-                        int index = adapter.getListData().indexOf(delete);
-                        ((AlbumPhoto) adapter.getListData().get(index)).setPickNumber(0);
-                        adapter.notifyItemChanged(index);
-                    }
-                    // add
-                    for (int j = 0; j < photoList.size(); j++) {
-                        AlbumPhoto photo = photoList.get(j);
-                        int index = adapter.getListData().indexOf(photo);
-                        if (index != -1) {
-                            ((AlbumPhoto) adapter.getListData().get(index)).setPickNumber(photo.getPickNumber());
-                            adapter.notifyItemChanged(index);
+                    if (data != null) {
+                        addPhotos = data.getParcelableArrayListExtra(RZConfig.PREVIEW_ADD_PHOTOS);
+                        List<AlbumPhoto> deletePhotos = data.getParcelableArrayListExtra(RZConfig.PREVIEW_DELETE_PHOTOS);
+                        // delete
+                        for (int i = 0; i < deletePhotos.size(); i++) {
+                            int index = mMultiAdapter.getDatas().indexOf(deletePhotos.get(i));
+                            mMultiAdapter.getDatas().get(index).setPickNumber(0);
+                            mMultiAdapter.notifyItemChanged(index);
+                        }
+                        // add
+                        for (int j = 0; j < addPhotos.size(); j++) {
+                            AlbumPhoto photo = addPhotos.get(j);
+                            int index = mMultiAdapter.getDatas().indexOf(photo);
+                            if (index != -1) {
+                                mMultiAdapter.getDatas().get(index).setPickNumber(photo.getPickNumber());
+                                mMultiAdapter.notifyItemChanged(index);
+                            }
                         }
                     }
                     break;
@@ -576,10 +545,6 @@ public class RZAlbumActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     protected void onDestroy() {
-        if (connection != null && connection.isConnected()) {
-            connection.disconnect();
-            connection = null;
-        }
         if (!mSingleExecutor.isShutdown()) {
             mSingleExecutor.shutdown();
             mSingleExecutor = null;
