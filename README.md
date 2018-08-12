@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="https://github.com/ray00178/RZAlbum-Java/blob/master/info/RZAlbum_Logo.png" alt="RZAlbum" width="450" height="450" />
+  <img src="https://github.com/ray00178/RZAlbum-Java/blob/master/RZAlbum_Logo.png" alt="RZAlbum" width="450" height="450" />
 </p>
 
-![](https://github.com/ray00178/RZAlbum-Java/blob/master/info/rzalbum_platform.svg) ![](https://github.com/ray00178/RZAlbum-Java/blob/master/info/rzalbum_version.svg) ![](https://github.com/ray00178/RZAlbum-Java/blob/master/info/rzalbum_license.svg)
+![](https://github.com/ray00178/RZAlbum-Java/blob/master/rzalbum_platform.svg) ![](https://github.com/ray00178/RZAlbum-Java/blob/master/rzalbum_version.svg) ![](https://github.com/ray00178/RZAlbum-Java/blob/master/rzalbum_license.svg)
 
 The RZAlbum for android to select the photo library. And usage：<br/>
 * Support Single choice、Multiple choice、Preview、Folder switch and take pictures.  
@@ -13,7 +13,7 @@ The RZAlbum for android to select the photo library. And usage：<br/>
 * For __Android7.0 or later, the camera function through the FileProvider do adaptation processing.__<br/>
 
 Screenshots <br/><br/>
-![](https://github.com/ray00178/RZAlbum-Java/blob/master/info/screenshots.png)
+![](https://github.com/ray00178/RZAlbum-Java/blob/master/screenshots.png)
 Gradle
 ====
 ```java
