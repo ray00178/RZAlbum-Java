@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="https://github.com/ray00178/RayZhangAlbum/blob/master/RZAlbum_Logo.png" alt="RZAlbum" width="450" height="450" />
+  <img src="https://github.com/ray00178/RZAlbum-Java/blob/master/info/RZAlbum_Logo.png" alt="RZAlbum" width="450" height="450" />
 </p>
 
-![](https://floating-brook-62420.herokuapp.com/images/rzalbum_platform.svg) ![](https://floating-brook-62420.herokuapp.com/images/rzalbum_version.svg) ![](https://floating-brook-62420.herokuapp.com/images/rzalbum_license.svg)
+![](https://github.com/ray00178/RZAlbum-Java/blob/master/info/rzalbum_platform.svg) ![](https://github.com/ray00178/RZAlbum-Java/blob/master/info/rzalbum_version.svg) ![](https://github.com/ray00178/RZAlbum-Java/blob/master/info/rzalbum_license.svg)
 
 The RZAlbum for android to select the photo library. And usage：<br/>
 * Support Single choice、Multiple choice、Preview、Folder switch and take pictures.  
@@ -13,11 +13,11 @@ The RZAlbum for android to select the photo library. And usage：<br/>
 * For __Android7.0 or later, the camera function through the FileProvider do adaptation processing.__<br/>
 
 Screenshots <br/><br/>
-![](https://github.com/ray00178/RayZhangAlbum/blob/master/screenshots.jpg)
+![](https://github.com/ray00178/RZAlbum-Java/blob/master/info/screenshots.png)
 Gradle
 ====
 ```java
-compile 'com.rayzhang.android:rzalbum:1.6.0'
+compile 'com.rayzhang.android:rzalbum:1.7.0'
 ```
 Maven
 ====
@@ -25,51 +25,33 @@ Maven
 <dependency>
   <groupId>com.rayzhang.android</groupId>
   <artifactId>rzalbum</artifactId>
-  <version>1.6.0</version>
+  <version>1.7.0</version>
   <type>pom</type>
 </dependency>
 ```
 Usage
 ====
-  1.Androidmanifest.xml, Add the following code.
-  ```xml
-  <!-- android:theme = Set according to your style
-  <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-      <item name="colorPrimary">@color/colorPrimary</item>
-      <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-      <item name="colorAccent">@color/colorAccent</item>
-  </style>
-
-  <style name="AppNoActionBar" parent="AppTheme">
-      <item name="windowActionBar">false</item>
-      <item name="windowNoTitle">true</item>
-  </style> -->
-  <activity
-     android:name="com.rayzhang.android.rzalbum.RZAlbumActivity"
-      android:configChanges="orientation|keyboardHidden|screenSize"
-     android:screenOrientation="portrait"
-      android:theme="@style/AppNoActionBar"
-      android:windowSoftInputMode="stateAlwaysHidden|stateHidden"/>
-  ```
-  2.Androidmanifest.xml, Add the following permissions.
+  1.Androidmanifest.xml, Add the following permissions.
   ```xml
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
   ```
-  3.Use RZAlbum. There are many ways to call.
+  2.Use RZAlbum. There are many ways to call.
   ```java
   /**
     * @param ofAppName             : (required)
     * @param setLimitCount         : (choose)   (default:5)     
     * @param setSpanCount          : (choose)   (default:3) 
-    * @param setStatusBarColor     : (choose)   (default:#ff512da8)
+    * @param setStatusBarColor     : (choose)   (default:#ff673ab7)
     * @param setToolBarColor       : (choose)   (default:#ff673ab7)
     * @param setToolBarTitle       : (choose)   (default:RZAlbum)
     * @param setPickColor          : (choose)   (default:#ffffc107)
     * @param setPreviewOrientation : (choose)   (default:ORIENTATION_AUTO)
-    * @param setDialogIcon         : (choose)
+    * @param setAllFolderName      : (choose)   (default:All Photos)
+    * @param setDialogIcon         : (choose)   (default:none)
     * @param showCamera            : (choose)   (default:true)
+    * @param showGif               : (choose)   (default:true)
     * @param start                 : (required)
     */
     RZAlbum.ofAppName("RZAlbum")
@@ -86,7 +68,9 @@ Usage
             .setPickColor(Color.argb(255, 153, 51, 255))
             .setDialogIcon(R.drawable.ic_bird_shape_30_3dp)
             .setPreviewOrientation(RZAlbum.ORIENTATION_PORTRATI)
+            .setAllFolderName("Photos")
             .showCamera(false)
+            .showGif(false)
             .start(this, REQUEST_RZALBUM);
   ```
   4.Override Activity's/Fragment's onActivityResult method.
@@ -96,8 +80,8 @@ Usage
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case RZALBUM_REQUESTCODE:
-                    List<String> paths = RZAlbum.parseResult(data);
-                    Log.d("RZAlbum", "GetPath:" + paths);
+                    List<AlbumPhoto> paths = RZAlbum.parseResult(data);
+                    Log.d("RZAlbum", "Photos:" + paths);
                     break;
             }
         }
@@ -116,10 +100,11 @@ Notice
 ====
   Due to support Material Design style and handle the image cache, So the library references the following categories.
   ```xml
-  compile 'com.android.support:design:25.3.1'
-  compile 'com.android.support:recyclerview-v7:25.3.1'
+  compile 'com.android.support:design:27.1.1'
+  compile 'com.android.support:recyclerview-v7:27.1.1'
   // Glide
-  compile 'com.github.bumptech.glide:glide:3.7.0'
+  compile 'com.github.bumptech.glide:glide:4.7.1'
+  annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
   ```
 License
 ====
