@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="https://github.com/ray00178/RayZhangAlbum/blob/master/RZAlbum_Logo.png" alt="RZAlbum" width="450" height="450" />
+  <img src="https://github.com/ray00178/RZAlbum-Java/blob/master/RZAlbum_Logo.png" alt="RZAlbum" width="450" height="450" />
 </p>
 
-![](https://floating-brook-62420.herokuapp.com/images/rzalbum_platform.svg) ![](https://floating-brook-62420.herokuapp.com/images/rzalbum_version.svg) ![](https://floating-brook-62420.herokuapp.com/images/rzalbum_license.svg)
+![](https://github.com/ray00178/RZAlbum-Java/blob/master/rzalbum_platform.svg) ![](https://github.com/ray00178/RZAlbum-Java/blob/master/rzalbum_version.svg) ![](https://github.com/ray00178/RZAlbum-Java/blob/master/rzalbum_license.svg)
 
 RZAlbum為Android而生的照片選擇庫，相關功能如下：<br/>
 * 可支持單選、複選、預覽、照片文件夾切換及內建拍照  
@@ -13,11 +13,11 @@ RZAlbum為Android而生的照片選擇庫，相關功能如下：<br/>
 * 對於__ Android7.0以上，拍照功能透過FileProvider做適配處理 __<br/>
 
 Screenshots <br/><br/>
-![](https://github.com/ray00178/RayZhangAlbum/blob/master/screenshots.jpg)
+![](https://github.com/ray00178/RZAlbum-Java/blob/master/screenshots.png)
 Gradle
 ====
 ```java
-compile 'com.rayzhang.android:rzalbum:1.6.0'
+compile 'com.rayzhang.android:rzalbum:1.7.0'
 ```
 Maven
 ====
@@ -25,52 +25,34 @@ Maven
 <dependency>
   <groupId>com.rayzhang.android</groupId>
   <artifactId>rzalbum</artifactId>
-  <version>1.6.0</version>
+  <version>1.7.0</version>
   <type>pom</type>
 </dependency>
 ```
 Usage
 ====
-  1.在Androidmanifest.xml加入以下程式碼
-  ```xml
-  <!-- android:theme = 根據你的風格設定
-  <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-      <item name="colorPrimary">@color/colorPrimary</item>
-      <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-      <item name="colorAccent">@color/colorAccent</item>
-  </style>
-
-  <style name="AppNoActionBar" parent="AppTheme">
-      <item name="windowActionBar">false</item>
-      <item name="windowNoTitle">true</item>
-  </style> -->
-  <activity
-     android:name="com.rayzhang.android.rzalbum.RZAlbumActivity"
-      android:configChanges="orientation|keyboardHidden|screenSize"
-     android:screenOrientation="portrait"
-      android:theme="@style/AppNoActionBar"
-      android:windowSoftInputMode="stateAlwaysHidden|stateHidden"/>
-  ```
-  2.在Androidmanifest.xml加入以下權限
+  1.在Androidmanifest.xml加入以下權限
   ```xml
     <!-- 相機、讀取儲存 -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
   ```
-  3.調用RZAlbum，有多種使用方法
+  2.調用RZAlbum，有多種使用方法
   ```java
   /**
     * @param ofAppName             : (必要)
     * @param setLimitCount         : (選擇性) (預設:5)
     * @param setSpanCount          : (選擇性) (預設:3)
-    * @param setStatusBarColor     : (選擇性) (預設:#ff512da8)
+    * @param setStatusBarColor     : (選擇性) (預設:#ff673ab7)
     * @param setToolBarColor       : (選擇性) (預設:#ff673ab7)
     * @param setToolBarTitle       : (選擇性) (預設:RZAlbum)
      * @param setPickColor          : (選擇性) (預設:#ffffc107)
      * @param setPreviewOrientation : (選擇性) (預設:ORIENTATION_AUTO)
+     * @param setAllFolderName      : (選擇性) (預設:All Photos)
      * @param setDialogIcon         : (選擇性)
     * @param showCamera            : (選擇性) (預設:true)
+    * @param showGif               : (選擇性) (預設:true)
     * @param start                 : (必要)
     */
     RZAlbum.ofAppName("RZAlbum")
@@ -87,24 +69,43 @@ Usage
             .setPickColor(Color.argb(255, 153, 51, 255))
             .setDialogIcon(R.drawable.ic_bird_shape_30_3dp)
             .setPreviewOrientation(RZAlbum.ORIENTATION_PORTRATI)
+            .setAllFolderName("Photos")
             .showCamera(false)
+            .showGif(false)
             .start(this, REQUEST_RZALBUM);
 ```
-4.Override Activity/Fragment的onActivityResult方法
+3.Override Activity/Fragment的onActivityResult方法
 ```java
   @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case RZALBUM_REQUESTCODE:
-                    List<String> paths = RZAlbum.parseResult(data);
+                    List<AlbumPhoto> paths = RZAlbum.parseResult(data);
                     Log.d("RZAlbum", "GetPath:" + paths);
                     break;
             }
         }
     }
+    
+    --- AlbumPhoto class 你可以從這個class取得更多照片的相關資訊 如下: ---
+        bucketName        --> Download
+        photoId           --> 65
+        photoDesc         --> null
+        photoLat          --> 0.0
+        photoLng          --> 0.0
+        photoOrientation  --> 0
+        photoDateAdded    --> 1530342373
+        photoDateModified --> 1509015603
+        photoName         --> mobile01_20171026_6.jpg
+        photoWidth        --> 720
+        photoHeight       --> 480
+        photoSize         --> 236972
+        photoMimeType     --> image/jpeg
+        photoIsPrivate    --> false
+        photoPath         --> /storage/emulated/0/Download/mobile01_20171026_6.jpg
 ```
-5.如果想自訂Dialog標題、內容描述及按鈕名稱，請在strings.xml覆蓋下列的名稱，即可
+4.如果想自訂Dialog標題、內容描述及按鈕名稱，請在strings.xml覆蓋下列的名稱，即可
 ```xml
   <string name="rz_album_dia_read_description">讀取權限允許說明</string>
   <string name="rz_album_dia_read_message">選擇照片 必須要取得您的同意，才可以使用。是否可以允許取得？</string>
@@ -117,11 +118,20 @@ Notice
 ====
   由於支援Material Design的風格及處理圖片的緩存，故該庫引用下列類別庫
   ```xml
-  compile 'com.android.support:design:25.3.1'
-  compile 'com.android.support:recyclerview-v7:25.3.1'
+  compile 'com.android.support:design:27.1.1'
+  compile 'com.android.support:recyclerview-v7:27.1.1'
   // Glide
-  compile 'com.github.bumptech.glide:glide:3.7.0'
+  compile 'com.github.bumptech.glide:glide:4.7.1'
+  annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
   ```
+Update Log
+====
+- **2018-08-12 Version 1.7.0**
+     - 新增 setAllFolderName() & showGif() 方法。
+     - 新增 AlbumPhoto class
+     - 優化一些class & 整體效能
+     - 更新【android support library -> 27.1.1】&【Glide -> 4.7.1】
+     
 License
 ====
   ```
