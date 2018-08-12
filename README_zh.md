@@ -52,7 +52,7 @@ Usage
      * @param setAllFolderName      : (選擇性) (預設:All Photos)
      * @param setDialogIcon         : (選擇性)
     * @param showCamera            : (選擇性) (預設:true)
-    * @param showGif               : (選擇性) (預設:true)
+     * @param showGif               : (選擇性) (預設:true)
     * @param start                 : (必要)
     */
     RZAlbum.ofAppName("RZAlbum")
