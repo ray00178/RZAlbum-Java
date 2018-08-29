@@ -115,13 +115,38 @@ Usage
   ```
 Notice
 ====
-  Due to support Material Design style and handle the image cache, So the library references the following categories.
+  1.Due to support Material Design style and handle the image cache, So the library references the following categories.
   ```xml
   compile 'com.android.support:design:27.1.1'
   compile 'com.android.support:recyclerview-v7:27.1.1'
   // Glide
   compile 'com.github.bumptech.glide:glide:4.7.1'
   annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
+  ```
+  2.If u build project then see error log like this.
+  ```xml
+  Manifest merger failed : Attribute application@label value=(@string/app_name) from           
+  AndroidManifest.xml:21:9-41 is also present at [com.rayzhang.android:rzalbum:1.7.0] AndroidManifest.xml:14:9-44 value=  
+  (@string/rz_app_name).Suggestion: add 'tools:replace="android:label"' to <application> element at 
+  AndroidManifest.xml:17:5-44:19 to override.
+  ```
+  You can in ur AndroidMainfest.xml add「tools:replace="android:label"」in application level.
+  ```xml
+  <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        tools:replace="android:label"> --> Here
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+  </application>
   ```
 Update Log
 ====
