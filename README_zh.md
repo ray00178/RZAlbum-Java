@@ -6,11 +6,11 @@
 
 RZAlbum為Android而生的照片選擇庫，相關功能如下：<br/>
 * 可支持單選、複選、預覽、照片文件夾切換及內建拍照  
-* 對於__ 6.0以上版本 __，已將權限做很好的處理，故無需擔心要自行處理
+* 對於6.0以上版本，已將權限做很好的處理，故無需擔心要自行處理
 * 依照你的專案配色，可自訂StatusBarColor、ToolBarColor、PickColor
 * 可依照你的喜好/需求，顯示欄位數量及選取張數限制
 * 無論是在Activity、Frangment，都可支持使用
-* 對於__ Android7.0以上，拍照功能透過FileProvider做適配處理 __<br/>
+* 對於Android7.0以上，拍照功能透過FileProvider做適配處理<br/>
 
 Screenshots <br/><br/>
 ![](https://github.com/ray00178/RZAlbum-Java/blob/master/screenshots.png)
@@ -123,6 +123,31 @@ Notice
   // Glide
   compile 'com.github.bumptech.glide:glide:4.7.1'
   annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
+  ```
+  2.如果在build專案時出現下列類似錯誤的訊息
+  ```xml
+  Manifest merger failed : Attribute application@label value=(@string/app_name) from           
+  AndroidManifest.xml:21:9-41 is also present at [com.rayzhang.android:rzalbum:1.7.0] AndroidManifest.xml:14:9-44 value=  
+  (@string/rz_app_name).Suggestion: add 'tools:replace="android:label"' to <application> element at 
+  AndroidManifest.xml:17:5-44:19 to override.
+  ```
+  您可以在AndroidMainfest.xml裏，application標籤裡添加「tools:replace="android:label"」即可解決該錯誤訊息
+  ```xml
+  <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        tools:replace="android:label"> --> Here
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+  </application>
   ```
 Update Log
 ====
