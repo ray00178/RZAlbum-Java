@@ -13,7 +13,7 @@ The RZAlbum for android to select the photo library. And usage：<br/>
 * For __Android7.0 or later, the camera function through the FileProvider do adaptation processing.__<br/>
 
 Screenshots <br/><br/>
-![](https://github.com/ray00178/RZAlbum-Java/blob/master/screenshots.png)
+![](https://github.com/ray00178/RZAlbum-Java/blob/master/doc/screenshots.png)
 Gradle
 ====
 ```java
