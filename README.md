@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/ray00178/RZAlbum-Java/blob/master/RZAlbum_Logo.png" alt="RZAlbum" width="450" height="450" />
+  <img src="https://github.com/ray00178/RZAlbum-Java/blob/master/doc/RZAlbum_Logo.png" alt="RZAlbum" width="450" height="450" />
 </p>
 
 ![](https://github.com/ray00178/RZAlbum-Java/blob/master/doc/rzalbum_platform.svg) ![](https://github.com/ray00178/RZAlbum-Java/blob/master/doc/rzalbum_version.svg) ![](https://github.com/ray00178/RZAlbum-Java/blob/master/doc/rzalbum_license.svg)
