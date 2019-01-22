@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="https://github.com/ray00178/RZAlbum-Java/blob/master/RZAlbum_Logo.png" alt="RZAlbum" width="450" height="450" />
+  <img src="https://github.com/ray00178/RZAlbum-Java/blob/master/doc/RZAlbum_Logo.png" alt="RZAlbum" width="450" height="450" />
 </p>
 
-![](https://github.com/ray00178/RZAlbum-Java/blob/master/rzalbum_platform.svg) ![](https://github.com/ray00178/RZAlbum-Java/blob/master/rzalbum_version.svg) ![](https://github.com/ray00178/RZAlbum-Java/blob/master/rzalbum_license.svg)
+![](https://github.com/ray00178/RZAlbum-Java/blob/master/doc/rzalbum_platform.svg) ![](https://github.com/ray00178/RZAlbum-Java/blob/master/doc/rzalbum_version.svg) ![](https://github.com/ray00178/RZAlbum-Java/blob/master/doc/rzalbum_license.svg)
 
 RZAlbum為Android而生的照片選擇庫，相關功能如下：<br/>
 * 可支持單選、複選、預覽、照片文件夾切換及內建拍照  
@@ -13,11 +13,11 @@ RZAlbum為Android而生的照片選擇庫，相關功能如下：<br/>
 * 對於Android7.0以上，拍照功能透過FileProvider做適配處理<br/>
 
 Screenshots <br/><br/>
-![](https://github.com/ray00178/RZAlbum-Java/blob/master/screenshots.png)
+![](https://github.com/ray00178/RZAlbum-Java/blob/master/doc/screenshots.png)
 Gradle
 ====
 ```java
-compile 'com.rayzhang.android:rzalbum:1.7.0'
+implementation 'com.rayzhang.android:rzalbum:1.7.1'
 ```
 Maven
 ====
@@ -25,7 +25,7 @@ Maven
 <dependency>
   <groupId>com.rayzhang.android</groupId>
   <artifactId>rzalbum</artifactId>
-  <version>1.7.0</version>
+  <version>1.7.1</version>
   <type>pom</type>
 </dependency>
 ```
@@ -118,16 +118,16 @@ Notice
 ====
   由於支援Material Design的風格及處理圖片的緩存，故該庫引用下列類別庫
   ```xml
-  compile 'com.android.support:design:27.1.1'
-  compile 'com.android.support:recyclerview-v7:27.1.1'
+  compile 'com.android.support:design:28.0.0'
+  compile 'com.android.support:recyclerview-v7:28.0.0'
   // Glide
-  compile 'com.github.bumptech.glide:glide:4.7.1'
-  annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
+  compile 'com.github.bumptech.glide:glide:4.8.0'
+  annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
   ```
   2.如果在build專案時出現下列類似錯誤的訊息
   ```xml
   Manifest merger failed : Attribute application@label value=(@string/app_name) from           
-  AndroidManifest.xml:21:9-41 is also present at [com.rayzhang.android:rzalbum:1.7.0] AndroidManifest.xml:14:9-44 value=  
+  AndroidManifest.xml:21:9-41 is also present at [com.rayzhang.android:rzalbum:1.7.1] AndroidManifest.xml:14:9-44 value=  
   (@string/rz_app_name).Suggestion: add 'tools:replace="android:label"' to <application> element at 
   AndroidManifest.xml:17:5-44:19 to override.
   ```
@@ -151,6 +151,8 @@ Notice
   ```
 Update Log
 ====
+- **2019-01-21 Version 1.7.1**
+     - 更新【android support library -> 28.0.0】&【Glide -> 4.8.0】
 - **2018-08-12 Version 1.7.0**
      - 新增 setAllFolderName() & showGif() 方法。
      - 新增 AlbumPhoto class

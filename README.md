@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="https://github.com/ray00178/RZAlbum-Java/blob/master/RZAlbum_Logo.png" alt="RZAlbum" width="450" height="450" />
+  <img src="https://github.com/ray00178/RZAlbum-Java/blob/master/doc/RZAlbum_Logo.png" alt="RZAlbum" width="450" height="450" />
 </p>
 
-![](https://github.com/ray00178/RZAlbum-Java/blob/master/rzalbum_platform.svg) ![](https://github.com/ray00178/RZAlbum-Java/blob/master/rzalbum_version.svg) ![](https://github.com/ray00178/RZAlbum-Java/blob/master/rzalbum_license.svg)
+![](https://github.com/ray00178/RZAlbum-Java/blob/master/doc/rzalbum_platform.svg) ![](https://github.com/ray00178/RZAlbum-Java/blob/master/doc/rzalbum_version.svg) ![](https://github.com/ray00178/RZAlbum-Java/blob/master/doc/rzalbum_license.svg)
 
 The RZAlbum for android to select the photo library. And usage：<br/>
 * Support Single choice、Multiple choice、Preview、Folder switch and take pictures.  
@@ -13,11 +13,11 @@ The RZAlbum for android to select the photo library. And usage：<br/>
 * For __Android7.0 or later, the camera function through the FileProvider do adaptation processing.__<br/>
 
 Screenshots <br/><br/>
-![](https://github.com/ray00178/RZAlbum-Java/blob/master/screenshots.png)
+![](https://github.com/ray00178/RZAlbum-Java/blob/master/doc/screenshots.png)
 Gradle
 ====
 ```java
-compile 'com.rayzhang.android:rzalbum:1.7.0'
+implementation 'com.rayzhang.android:rzalbum:1.7.1'
 ```
 Maven
 ====
@@ -25,7 +25,7 @@ Maven
 <dependency>
   <groupId>com.rayzhang.android</groupId>
   <artifactId>rzalbum</artifactId>
-  <version>1.7.0</version>
+  <version>1.7.1</version>
   <type>pom</type>
 </dependency>
 ```
@@ -117,11 +117,11 @@ Notice
 ====
   1.Due to support Material Design style and handle the image cache, So the library references the following categories.
   ```xml
-  compile 'com.android.support:design:27.1.1'
-  compile 'com.android.support:recyclerview-v7:27.1.1'
+  compile 'com.android.support:design:28.0.0'
+  compile 'com.android.support:recyclerview-v7:28.0.0'
   // Glide
-  compile 'com.github.bumptech.glide:glide:4.7.1'
-  annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
+  compile 'com.github.bumptech.glide:glide:4.8.0'
+  annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
   ```
   2.If u build project then see error log like this.
   ```xml
@@ -150,6 +150,8 @@ Notice
   ```
 Update Log
 ====
+- **2019-01-21 Version 1.7.1**
+     - update【android support library -> 28.0.0】&【Glide -> 4.8.0】
 - **2018-08-12 Version 1.7.0**
      - add setAllFolderName() & showGif() function
      - add AlbumPhoto class
