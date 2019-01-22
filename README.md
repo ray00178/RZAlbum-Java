@@ -17,7 +17,7 @@ Screenshots <br/><br/>
 Gradle
 ====
 ```java
-implementation 'com.rayzhang.android:rzalbum:1.7.1'
+implementation 'com.rayzhang.android:rzalbum:1.7.4'
 ```
 Maven
 ====
@@ -25,7 +25,7 @@ Maven
 <dependency>
   <groupId>com.rayzhang.android</groupId>
   <artifactId>rzalbum</artifactId>
-  <version>1.7.1</version>
+  <version>1.7.4</version>
   <type>pom</type>
 </dependency>
 ```
@@ -150,7 +150,7 @@ Notice
   ```
 Update Log
 ====
-- **2019-01-21 Version 1.7.1**
+- **2019-01-21 Version 1.7.4**
      - update【android support library -> 28.0.0】&【Glide -> 4.8.0】
 - **2018-08-12 Version 1.7.0**
      - add setAllFolderName() & showGif() function
